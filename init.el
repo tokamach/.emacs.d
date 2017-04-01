@@ -45,7 +45,7 @@
 (defun theme-update-callback ()
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
     ("pink\n" (load-theme 'pink-bliss t))
-    ("tol\n" (load-theme 'birds-of-paradise-plus t))
+    ("tol\n"  (load-theme 'birds-of-paradise-plus t))
     ("dark\n" (load-theme 'zenburn t))
     (t (load-theme 'creamsody t)))) ;blue
 

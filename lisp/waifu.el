@@ -59,4 +59,3 @@
 
 (provide 'waifu)
 ;;; waifu.el ends here
-
