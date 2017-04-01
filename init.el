@@ -14,11 +14,11 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
 (require 'waifu)
 
-; stop backups
+;; stop backups
 (setq backup-inhibited t
       auto-save-default nil)
 
-; ｍｉｎｉｍａｌｉｓｍ
+;; ｍｉｎｉｍａｌｉｓｍ
 (blink-cursor-mode 0)
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
