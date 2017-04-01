@@ -32,7 +32,7 @@
 (require 'slime)
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
-;; depends on kawaiify theme
+;; kawaiify theme
 (require 'cl)
 (require 'filenotify)
 

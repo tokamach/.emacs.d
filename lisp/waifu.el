@@ -5,6 +5,8 @@
 ;; what am i doing
 ;; it's not even written well
 ;; meta-irony levels approaching overflow
+;;
+;; requires image-magick to be compiled in to emacs
 
 ;;; Code:
 (define-derived-mode waifu-mode special-mode "waifu"
