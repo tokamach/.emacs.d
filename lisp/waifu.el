@@ -1,6 +1,9 @@
 ;;;; waifu.el --- Browse trash^H^H^H^H^H images folder
 ;;;; inspiration from xkcd-mode, thanks i guess
 
+;;(require 'cl) ;thank common lisp for useful
+;; lol nvm
+
 ;;; Commentary:
 ;; what am i doing
 ;; it's not even written well
@@ -25,6 +28,15 @@
   "waifu store aka trash"
   :group 'waifu
   :type 'directory)
+
+;; #lispisbest
+(defun waifu-keybind-to-dir (key-dir-list)
+  (mapcar (lambda (key-dir)
+            (message "%s" `(cdr ,key-dir))
+            (define-key waifu-mode-map
+                        (kbd (car key-dir))
+                        `(lambda () (interactive) (waifu-show (cdr ,key-dir)))))
+          key-dir-list))
 
 (defun get-files-from-root ()
   (directory-files-recursively waifu-directory ".*\.\\(jpg\\|jpeg\\|png\\|gif\\)"))

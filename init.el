@@ -12,7 +12,12 @@
 ;; config
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
+
+;; waifu-mode
 (require 'waifu)
+(waifu-keybind-to-dir
+ '(("m" . "~/Pictures/animu/madoka_magica/stern-homura.jpg")
+   ("M" . "~/Pictures/animu/madoka_magica/BuQVDUF.gif")))
 
 ;; stop backups
 (setq backup-inhibited t
@@ -47,7 +52,7 @@
     ("pink\n" (load-theme 'pink-bliss t))
     ("tol\n"  (load-theme 'birds-of-paradise-plus t))
     ("dark\n" (load-theme 'zenburn t))
-    (t (load-theme 'creamsody t)))) ;blue
+    (_ (load-theme 'creamsody t)))) ;blue
 
 (theme-update-callback 0)
 
@@ -84,6 +89,7 @@
   "wr" 'evil-window-rotate-upwards
   "wR" 'evil-window-rotate-downwards
   "wb" 'balance-windows
+  "wf" 'toggle-frame-fullscreen
           ;buffers
   "bb" 'switch-to-buffer
   "bk" 'kill-buffer
@@ -103,6 +109,7 @@
           ;minor modes
   "pp" 'parinfer-mode
   "pt" 'parinfer-toggle-mode
+  "ps" 'show-paren-mode
   "po" 'olivetti-mode
   "pc" 'company-mode
   "pf" 'fci-mode
@@ -145,10 +152,15 @@
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (company-jedi sudoku gnugo symon slack rainbow-delimiters flycheck smart-mode-line-powerline-theme smart-mode-line neotree imenu-list xcode-mode swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile minimap company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key markdown-preview-mode smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game twittering-mode smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
+    (irony company-jedi sudoku gnugo symon slack rainbow-delimiters flycheck smart-mode-line-powerline-theme smart-mode-line neotree imenu-list xcode-mode swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile minimap company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key markdown-preview-mode smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game twittering-mode smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
  '(safe-local-variable-values (quote ((eval turn-on-orgtbl))))
  '(tool-bar-mode nil))
 (custom-set-faces)
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ 
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
