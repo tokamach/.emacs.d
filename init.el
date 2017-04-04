@@ -93,8 +93,10 @@
           ;buffers
   "bb" 'switch-to-buffer
   "bk" 'kill-buffer
-  "be" 'eval-buffer
-  "br" 'eval-expression
+	  ;eval
+  "eb" 'eval-buffer
+  "er" 'eval-expression
+  "ev" 'eval-region
           ;registers
   "ry" 'copy-to-register
   "rp" 'insert-register
@@ -156,21 +158,6 @@
  '(safe-local-variable-values (quote ((eval turn-on-orgtbl))))
  '(tool-bar-mode nil))
 (custom-set-faces)
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- 
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
