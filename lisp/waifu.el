@@ -28,13 +28,13 @@
 
 ;; #lispisbest
 (defun waifu-keybind-to-dir (key-dir-list)
-  (message "1: %s" key-dir-list)
-  (mapcar (lambda (key-dir)
-            (message "2: %s" (car key-dir))
-            (define-key waifu-mode-map
-                        (kbd (car key-dir))
-                        `(lambda () (interactive) (waifu-show (last ,key-dir)))))
-          key-dir-list))
+  (dolist (key-dir-pair key-dir-list)
+    (let ((key  (car key-dir-pair))
+          (path (nth 1 key-dir-pair))) ;bad but work
+      (message "img is %s %s" path "hallo")
+      (define-key waifu-mode-map
+                  (kbd key)
+                  `(lambda () (interactive) (waifu-show ',path))))))
 
 (defun get-files-from-root ()
   (directory-files-recursively waifu-directory ".*\.\\(jpg\\|jpeg\\|png\\|gif\\)"))
