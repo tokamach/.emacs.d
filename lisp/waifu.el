@@ -72,7 +72,7 @@
          (img-path (nth (random (length imgs)) imgs)))
     (waifu-show img-path)))
 
-;; WAIFU IS TSUDNERE NEKO MAID NOW
+;; WAIFU IS TSUNDERE NEKO MAID NOW
 ;; I-ITS NOT LIKE I WANTED TO CLEAN
 ;; ALL THE SPARE BUFFERS OR ANYTHING
 (defun waifu-clean ()
