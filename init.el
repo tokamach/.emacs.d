@@ -16,8 +16,8 @@
 ;; waifu-mode
 (require 'waifu)
 (waifu-keybind-to-dir
- '(("m" . "~/Pictures/animu/madoka_magica/stern-homura.jpg")
-   ("M" . "~/Pictures/animu/madoka_magica/BuQVDUF.gif")))
+ '(("m" "~/Pictures/animu/madoka_magica/stern-homura.jpg")
+   ("M" "~/Pictures/animu/madoka_magica/BuQVDUF.gif")))
 
 ;; stop backups
 (setq backup-inhibited t
