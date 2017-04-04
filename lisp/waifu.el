@@ -2,9 +2,9 @@
 ;;;; inspiration from xkcd-mode, thanks i guess
 
 ;;; Commentary:
-;; what am i doing
-;; it's not even written well
-;; meta-irony levels approaching overflow
+;; i GUESS if you REALLY WANTED you could use this
+;; for browsing NORMAL image folders. but I don't
+;; really see why you'd do that
 ;;
 ;; requires image-magick to be compiled in to emacs
 
