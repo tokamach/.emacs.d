@@ -16,8 +16,11 @@
 ;; waifu-mode
 (require 'waifu)
 (waifu-keybind-to-dir
- '(("m" "~/Pictures/animu/madoka_magica/stern-homura.jpg")
-   ("M" "~/Pictures/animu/madoka_magica/BuQVDUF.gif")))
+ '(("m" "~/Pictures/animu/madoka_magica/madoka")
+   ("h" "~/Pictures/animu/madoka_magica/homura")
+   ("s" "~/Pictures/animu/madoka_magica/sayaka")
+   ("k" "~/Pictures/animu/madoka_magica/kyouko")
+   ("M" "~/Pictures/animu/madoka_magica/mami")))
 
 ;; stop backups
 (setq backup-inhibited t
@@ -93,7 +96,7 @@
           ;buffers
   "bb" 'switch-to-buffer
   "bk" 'kill-buffer
-	  ;eval
+    ;eval
   "eb" 'eval-buffer
   "er" 'eval-expression
   "ev" 'eval-region
