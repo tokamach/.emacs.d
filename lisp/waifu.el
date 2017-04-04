@@ -60,19 +60,19 @@
   (interactive)
   (waifu-show "/Users/tom/Pictures/animu/madoka_magica/homura/1489990442923.jpg"))
 
-(defun waifu-random (rootdir)
+(defun waifu-random (curdir)
   (interactive)
-  (let* ((imgs (get-files-from-root rootdir))
+  (let* ((imgs (get-file-list-recurse curdir))
          (img-path (nth (random (length imgs)) imgs)))
     (waifu-show img-path)))
 
 (defun waifu-random-root ()
   (interactive)
-  (let* ((imgs (get-files-from-root root-waifu-directory))
+  (let* ((imgs (get-file-list-recurse root-waifu-directory))
          (img-path (nth (random (length imgs)) imgs)))
     (waifu-show img-path)))
 
-(defalias 'waifu 'waifu-random)
+(defalias 'waifu 'waifu-random-root)
 
 (provide 'waifu)
 ;;; waifu.el ends here
