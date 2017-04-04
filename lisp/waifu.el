@@ -13,14 +13,14 @@
   "Major mode for browsing waifu folder"
   :group 'waifu)
 
-(define-key waifu-mode-map (kbd "r") 'waifu-random)
+(define-key waifu-mode-map (kbd "r") 'waifu-random-root)
 (define-key waifu-mode-map (kbd "c") 'waifu-comf)
 
 (defgroup waifu nil
   "A waifu browser"
   :group 'multimedia)
 
-(defcustom waifu-directory
+(defcustom root-waifu-directory
   "~/Pictures/animu/"
   "waifu store aka trash"
   :group 'waifu
@@ -31,13 +31,12 @@
   (dolist (key-dir-pair key-dir-list)
     (let ((key  (car key-dir-pair))
           (path (nth 1 key-dir-pair))) ;bad but work
-      (message "img is %s %s" path "hallo")
       (define-key waifu-mode-map
                   (kbd key)
-                  `(lambda () (interactive) (waifu-show ',path))))))
+                  `(lambda () (interactive) (waifu-random ',path))))))
 
-(defun get-files-from-root ()
-  (directory-files-recursively waifu-directory ".*\.\\(jpg\\|jpeg\\|png\\|gif\\)"))
+(defun get-file-list-recurse (rootdir)
+  (directory-files-recursively rootdir ".*\.\\(jpg\\|jpeg\\|png\\|gif\\)"))
 
 (defun waifu-show (filepath)
   (set-transient-map waifu-mode-map)
@@ -61,9 +60,15 @@
   (interactive)
   (waifu-show "/Users/tom/Pictures/animu/madoka_magica/homura/1489990442923.jpg"))
 
-(defun waifu-random ()
+(defun waifu-random (rootdir)
   (interactive)
-  (let* ((imgs (get-files-from-root))
+  (let* ((imgs (get-files-from-root rootdir))
+         (img-path (nth (random (length imgs)) imgs)))
+    (waifu-show img-path)))
+
+(defun waifu-random-root ()
+  (interactive)
+  (let* ((imgs (get-files-from-root root-waifu-directory))
          (img-path (nth (random (length imgs)) imgs)))
     (waifu-show img-path)))
 
