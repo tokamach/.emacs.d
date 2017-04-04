@@ -14,6 +14,7 @@
   :group 'waifu)
 
 (define-key waifu-mode-map (kbd "r") 'waifu-random-root)
+(define-key waifu-mode-map (kbd "q") 'waifu-kill-self)
 (define-key waifu-mode-map (kbd "c") 'waifu-comf)
 
 (defgroup waifu nil
@@ -44,8 +45,7 @@
          (img-dimensions (image-size (eval img) :pixels))
          (width (car img-dimensions))
          (height (cdr img-dimensions)))
-    (get-buffer-create "*waifu*")
-    (switch-to-buffer "*waifu*")
+    (switch-to-buffer (generate-new-buffer "*waifu*"))
     (waifu-mode)
     (let (buffer-read-only)
       (erase-buffer)
@@ -71,6 +71,18 @@
   (let* ((imgs (get-file-list-recurse root-waifu-directory))
          (img-path (nth (random (length imgs)) imgs)))
     (waifu-show img-path)))
+
+;; WAIFU IS TSUDNERE NEKO MAID NOW
+;; I-ITS NOT LIKE I WANTED TO CLEAN
+;; ALL THE SPARE BUFFERS OR ANYTHING
+(defun waifu-clean ()
+  (interactive)
+  (kill-matching-buffers "\*waifu\*")) ;edgy
+
+;; PLS NO
+(defun waifu-kill-self ()
+  (interactive)
+  (kill-buffer (current-buffer)))
 
 (defalias 'waifu 'waifu-random-root)
 

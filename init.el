@@ -72,6 +72,8 @@
 (global-evil-leader-mode)
 (require 'evil) ;avoids arthiritis
 (evil-mode 1)
+(add-to-list 'evil-emacs-state-modes 'waifu-mode) ; stop eviling it up
+
 (define-key evil-normal-state-map (kbd ";") 'smex)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
