@@ -81,7 +81,7 @@
   (interactive)
   (kill-matching-buffers "\*waifu\*")) ;edgy
 
-;; PLS NO
+;; pls no sudoku
 (defun waifu-kill-self ()
   (interactive)
   (kill-buffer (current-buffer)))
