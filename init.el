@@ -68,6 +68,11 @@
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 
+;; xah-fly-keys
+;(require 'xah-fly-keys)
+;(xah-fly-keys-set-layout "qwerty")
+;(xah-fly-keys 1)
+
 ;; evil and evil-leader binds
 (global-evil-leader-mode)
 (require 'evil) ;avoids arthiritis

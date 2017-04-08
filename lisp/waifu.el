@@ -39,13 +39,15 @@
 (defun get-file-list-recurse (rootdir)
   (directory-files-recursively rootdir ".*\.\\(jpg\\|jpeg\\|png\\|gif\\)"))
 
-(defun waifu-show (filepath)
+(defun waifu-show (filepath &optional make-new)
   (set-transient-map waifu-mode-map)
   (let* ((img '(create-image filepath 'imagemagick nil))
          (img-dimensions (image-size (eval img) :pixels))
          (width (car img-dimensions))
          (height (cdr img-dimensions)))
-    (switch-to-buffer (generate-new-buffer "*waifu*"))
+    (if make-new
+      (switch-to-buffer (generate-new-buffer "*waifu*"))
+      (switch-to-buffer (get-buffer-create "*waifu*")))
     (waifu-mode)
     (let (buffer-read-only)
       (erase-buffer)
