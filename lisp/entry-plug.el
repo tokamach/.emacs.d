@@ -12,16 +12,12 @@
                   (kbd key)
                   cmd))))
 
-(defun waifu-keybind-to-dir (key-dir-list)
-  (dolist (key-dir-pair key-dir-list)
-    (let ((key  (car key-dir-pair))
-          (path (nth 1 key-dir-pair))) ;bad but work
-      (define-key waifu-mode-map
-                  (kbd key)
-                  `(lambda () (interactive) (waifu-random ',path))))))
-
 (define-minor-mode entry-plug-mode
   "Modal editing mode"
   nil " entry-plug")
 
-  
+(defun entry-plug ()
+  (interactive)
+  ())
+
+(provide 'entry-plug)

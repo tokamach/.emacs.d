@@ -83,6 +83,7 @@
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
   ";" 'smex
+  "qq" 'save-buffers-kill-terminal
           ;files
   "ff" 'find-file
   "fw" 'save-buffer
@@ -125,7 +126,6 @@
   "po" 'olivetti-mode
   "pc" 'company-mode
   "pf" 'fci-mode
-  "qq" 'save-buffers-kill-terminal
   "pw" 'waifu
           ; applications
   "at" 'tetris
