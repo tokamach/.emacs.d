@@ -8,7 +8,7 @@
              '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-;; autoload stuff
+;; custom-variable stuff
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
