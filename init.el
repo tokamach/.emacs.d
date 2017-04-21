@@ -24,7 +24,15 @@
    ("h" "~/Pictures/animu/madoka_magica/homura")
    ("s" "~/Pictures/animu/madoka_magica/sayaka")
    ("k" "~/Pictures/animu/madoka_magica/kyouko")
-   ("M" "~/Pictures/animu/madoka_magica/mami")))
+   ("M" "~/Pictures/animu/madoka_magica/mami")
+   ("t" "~/Pictures/animu/gabriel_dropout/tapris")
+   ("v" "~/Pictures/animu/gabriel_dropout/vigne")))
+
+;;tramp
+(setq tramp-default-method "ssh")
+
+;;flyspell
+(setq ispell-program-name "/usr/local/bin/ispell")
 
 ;; stop backups
 (setq backup-inhibited t
