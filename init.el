@@ -28,7 +28,7 @@
    ("t" "~/Pictures/animu/gabriel_dropout/tapris")
    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
    ("r" "~/Pictures/animu/chuu2/rikka")
-   ("p" "~/Pictures/animu/2hu/patchy)))
+   ("p" "~/Pictures/animu/2hu/patchy")))
 
 ;;tramp
 (setq tramp-default-method "ssh")
