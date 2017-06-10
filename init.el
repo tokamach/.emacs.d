@@ -26,13 +26,19 @@
    ("k" "~/Pictures/animu/madoka_magica/kyouko")
    ("M" "~/Pictures/animu/madoka_magica/mami")
    ("t" "~/Pictures/animu/gabriel_dropout/tapris")
-   ("v" "~/Pictures/animu/gabriel_dropout/vigne")))
+   ("v" "~/Pictures/animu/gabriel_dropout/vigne")
+   ("r" "~/Pictures/animu/chuu2/rikka")
+   ("p" "~/Pictures/animu/2hu/patchy)))
 
 ;;tramp
 (setq tramp-default-method "ssh")
 
 ;;flyspell
 (setq ispell-program-name "/usr/local/bin/ispell")
+
+;;smooth scroll
+(require 'smooth-scrolling)
+(smooth-scrolling-mode 1) 
 
 ;; stop backups
 (setq backup-inhibited t
@@ -47,10 +53,7 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-
-;; slime
-(require 'slime)
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(fringe-mode '(2 . 2))
 
 ;; kawaiify theme
 (require 'cl)
@@ -65,9 +68,11 @@
 (defun theme-update-callback (event)
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
     ("pink\n" (load-theme 'pink-bliss t))
-    ("tol\n"  (load-theme 'birds-of-paradise-plus t))
+    ("blue\n"  (load-theme 'creamsody t))
+    ("reddish\n"  (load-theme 'birds-of-paradise-plus t))
     ("dark\n" (load-theme 'zenburn t))
-    (_ (load-theme 'creamsody t)))) ;blue
+    ("dragons\n" (load-theme 'anti-zenburn t))
+    (_ (load-theme 'zenburn t)))) ;fallback
 
 (theme-update-callback 0)
 
@@ -103,3 +108,12 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+
+;;; Languages
+;; C/C++
+(setq c-default-style "linux"
+      c-basic-offset 4)
+
+;; Common Lisp
+(require 'slime)
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
