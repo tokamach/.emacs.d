@@ -27,7 +27,7 @@
    ("M" "~/Pictures/animu/madoka_magica/mami")
    ("t" "~/Pictures/animu/gabriel_dropout/tapris")
    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
-   ("r" "~/Pictures/animu/chuu2/rikka")
+   ("R" "~/Pictures/animu/chuu2/rikka")
    ("p" "~/Pictures/animu/2hu/patchy")))
 
 ;;tramp
@@ -69,8 +69,8 @@
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
     ("pink\n" (load-theme 'pink-bliss t))
     ("blue\n"  (load-theme 'creamsody t))
-    ("reddish\n"  (load-theme 'birds-of-paradise-plus t))
-    ("dark\n" (load-theme 'zenburn t))
+    ("purpur\n"  (load-theme 'base16-paraiso t))
+    ("sleeper\n" (load-theme 'adwaita t))
     ("dragons\n" (load-theme 'anti-zenburn t))
     (_ (load-theme 'zenburn t)))) ;fallback
 
@@ -117,3 +117,6 @@
 ;; Common Lisp
 (require 'slime)
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+;; Crystal
+(require 'crystal-mode)

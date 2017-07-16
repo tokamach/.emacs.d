@@ -26,6 +26,10 @@
   "wR" 'evil-window-rotate-downwards
   "wb" 'balance-windows
   "wf" 'toggle-frame-fullscreen
+  "wH" 'buf-move-left
+  "wJ" 'buf-move-down
+  "wK" 'buf-move-up
+  "wL" 'buf-move-right
           ;buffers
   "bb" 'switch-to-buffer
   "bk" 'kill-buffer
