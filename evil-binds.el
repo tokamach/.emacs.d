@@ -56,7 +56,8 @@
   "pc" 'company-mode
   "pf" 'fci-mode
   "pw" 'waifu
-          ; applications
+  "pm" 'minimap-mode
+          ;applications
   "at" 'tetris
   "a2" '2048-game
   "aw" 'eww)

@@ -67,11 +67,11 @@
 
 (defun theme-update-callback (event)
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
-    ("pink\n" (load-theme 'pink-bliss t))
-    ("blue\n"  (load-theme 'creamsody t))
+    ("doll-loli\n"  (load-theme 'base16-summerfruit-light t))
     ("purpur\n"  (load-theme 'base16-paraiso t))
     ("sleeper\n" (load-theme 'adwaita t))
     ("dragons\n" (load-theme 'anti-zenburn t))
+    ("conman\n"  (load-theme 'base16-grayscale-light t))
     (_ (load-theme 'zenburn t)))) ;fallback
 
 (theme-update-callback 0)
@@ -108,11 +108,16 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-
 ;;; Languages
 ;; C/C++
 (setq c-default-style "linux"
       c-basic-offset 4)
+
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; Common Lisp
 (require 'slime)
