@@ -25,18 +25,16 @@
    ("s" "~/Pictures/animu/madoka_magica/sayaka")
    ("k" "~/Pictures/animu/madoka_magica/kyouko")
    ("M" "~/Pictures/animu/madoka_magica/mami")
-   ("t" "~/Pictures/animu/gabriel_dropout/tapris")
    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
-   ("R" "~/Pictures/animu/chuu2/rikka")
-   ("p" "~/Pictures/animu/2hu/patchy")))
+   ("p" "~/Pictures/animu/proggybooks")))
 
-;;tramp
+;; tramp
 (setq tramp-default-method "ssh")
 
-;;flyspell
+;; flyspell
 (setq ispell-program-name "/usr/local/bin/ispell")
 
-;;smooth scroll
+;; smooth scroll
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1) 
 
@@ -72,6 +70,7 @@
     ("sleeper\n" (load-theme 'adwaita t))
     ("dragons\n" (load-theme 'anti-zenburn t))
     ("conman\n"  (load-theme 'base16-grayscale-light t))
+    ("catboi\n"  (load-theme 'creamsody t))
     (_ (load-theme 'zenburn t)))) ;fallback
 
 (theme-update-callback 0)
@@ -81,19 +80,18 @@
  '(change attribute-change)
  'theme-update-callback)
 
-;;Smart mode line
+;; Smart mode line
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 
-;;Evil binds
+;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
+(which-key-mode)
 
 ;; xah-fly-keys
 ;(require 'xah-fly-keys)
 ;(xah-fly-keys-set-layout "qwerty")
 ;(xah-fly-keys 1)
-
-(which-key-mode)
 
 ;; ido and smex
 (require 'ido-vertical-mode)

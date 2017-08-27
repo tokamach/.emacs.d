@@ -19,7 +19,9 @@
     (flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony company-jedi sudoku gnugo symon slack rainbow-delimiters smart-mode-line-powerline-theme smart-mode-line neotree imenu-list xcode-mode swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile minimap company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key markdown-preview-mode smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game twittering-mode smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
  '(safe-local-variable-values
    (quote
-    ((company-clang-arguments "-I/usr/local/include/" "-I/usr/local/include/GLFW/" "--std=c++11")
+    ((olivetti-body-width . 94)
+     (olivetti-body-width . 100)
+     (company-clang-arguments "-I/usr/local/include/" "-I/usr/local/include/GLFW/" "--std=c++11")
      (company-clang-arguments
       ("-I/usr/local/include/")
       ("-I/usr/local/include/GLFW/")

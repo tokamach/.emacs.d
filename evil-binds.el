@@ -2,7 +2,7 @@
 (global-evil-leader-mode)
 (require 'evil) ;avoids arthiritis
 (evil-mode 1)
-(add-to-list 'evil-emacs-state-modes 'waifu-mode) ; stop eviling it up
+;(add-to-list 'evil-emacs-state-modes 'waifu-mode) ; stop eviling it up
 
 (define-key evil-normal-state-map (kbd ";") 'smex)
 (evil-leader/set-leader "<SPC>")
@@ -57,6 +57,7 @@
   "pf" 'fci-mode
   "pw" 'waifu
   "pm" 'minimap-mode
+  "pi" 'imenu-list-smart-toggle
           ;applications
   "at" 'tetris
   "a2" '2048-game
