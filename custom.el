@@ -16,7 +16,7 @@
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony company-jedi sudoku gnugo symon slack rainbow-delimiters smart-mode-line-powerline-theme smart-mode-line neotree imenu-list xcode-mode swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile minimap company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key markdown-preview-mode smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game twittering-mode smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
+    (evil-magit flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony company-jedi sudoku gnugo symon slack rainbow-delimiters smart-mode-line-powerline-theme smart-mode-line neotree imenu-list xcode-mode swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile minimap company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key markdown-preview-mode smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game twittering-mode smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
  '(safe-local-variable-values
    (quote
     ((olivetti-body-width . 94)
