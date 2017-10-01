@@ -26,7 +26,36 @@
    ("k" "~/Pictures/animu/madoka_magica/kyouko")
    ("M" "~/Pictures/animu/madoka_magica/mami")
    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
+   ("f" "~/Pictures/animu/re_zero/felix")
    ("p" "~/Pictures/animu/proggybooks")))
+
+;; kawaiify theme
+(require 'cl)
+(require 'filenotify)
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun theme-update-callback (event)
+  (pcase (get-string-from-file "~/.kawaiify/theme.lock")
+    ("doll-loli\n"  (load-theme 'base16-summerfruit-light t))
+    ("purpur\n"  (load-theme 'base16-paraiso t))
+    ("sleeper\n" (load-theme 'adwaita t))
+    ("dragons\n" (load-theme 'anti-zenburn t))
+    ("conman\n"  (load-theme 'base16-grayscale-light t))
+    ("catboi\n"  (load-theme 'creamsody t) (creamsody-modeline-two))
+    ("blue\n"  (load-theme 'creamsody t) (creamsody-modeline-two))
+    ("madohomu\n"   (load-theme 'birds-of-paradise-plus t))
+    (_ (load-theme 'zenburn t)))) ;fallback
+
+(theme-update-callback 0)
+(file-notify-add-watch
+ "~/.kawaiify/theme.lock"
+ '(change attribute-change)
+ 'theme-update-callback)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -53,33 +82,6 @@
 (scroll-bar-mode 0)
 (fringe-mode '(2 . 2))
 
-;; kawaiify theme
-(require 'cl)
-(require 'filenotify)
-
-(defun get-string-from-file (filePath)
-  "Return filePath's file content."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
-
-(defun theme-update-callback (event)
-  (pcase (get-string-from-file "~/.kawaiify/theme.lock")
-    ("doll-loli\n"  (load-theme 'base16-summerfruit-light t))
-    ("purpur\n"  (load-theme 'base16-paraiso t))
-    ("sleeper\n" (load-theme 'adwaita t))
-    ("dragons\n" (load-theme 'anti-zenburn t))
-    ("conman\n"  (load-theme 'base16-grayscale-light t))
-    ("catboi\n"  (load-theme 'creamsody t))
-    (_ (load-theme 'zenburn t)))) ;fallback
-
-(theme-update-callback 0)
-
-(file-notify-add-watch
- "~/.kawaiify/theme.lock"
- '(change attribute-change)
- 'theme-update-callback)
-
 ;; Smart mode line
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
@@ -87,11 +89,6 @@
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
 (which-key-mode)
-
-;; xah-fly-keys
-;(require 'xah-fly-keys)
-;(xah-fly-keys-set-layout "qwerty")
-;(xah-fly-keys 1)
 
 ;; ido and smex
 (require 'ido-vertical-mode)

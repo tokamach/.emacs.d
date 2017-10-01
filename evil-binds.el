@@ -1,8 +1,10 @@
 ;; evil and evil-leader binds
 (global-evil-leader-mode)
-(require 'evil) ;avoids arthiritis
+(require 'evil)
 (evil-mode 1)
 ;(add-to-list 'evil-emacs-state-modes 'waifu-mode) ; stop eviling it up
+
+(require 'evil-magit)
 
 (define-key evil-normal-state-map (kbd ";") 'smex)
 (evil-leader/set-leader "<SPC>")
