@@ -60,6 +60,7 @@
   "pw" 'waifu
   "pm" 'minimap-mode
   "pi" 'imenu-list-smart-toggle
+  "pn" 'neotree-toggle
           ;applications
   "at" 'tetris
   "a2" '2048-game

@@ -41,14 +41,15 @@
 
 (defun theme-update-callback (event)
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
+    ("pink\n" (load-theme 'base16-unikitty-light t))
     ("doll-loli\n"  (load-theme 'base16-summerfruit-light t))
     ("purpur\n"  (load-theme 'base16-paraiso t))
     ("sleeper\n" (load-theme 'adwaita t))
-    ("dragons\n" (load-theme 'anti-zenburn t))
+    ("dragons\n" (load-theme 'pink-bliss t))
     ("conman\n"  (load-theme 'base16-grayscale-light t))
     ("catboi\n"  (load-theme 'creamsody t) (creamsody-modeline-two))
-    ("blue\n"  (load-theme 'creamsody t) (creamsody-modeline-two))
-    ("madohomu\n"   (load-theme 'birds-of-paradise-plus t))
+    ("blue\n"    (load-theme 'creamsody t) (creamsody-modeline-two))
+    ("pinkish\n"   (load-theme 'birds-of-paradise-plus t))
     (_ (load-theme 'zenburn t)))) ;fallback
 
 (theme-update-callback 0)
@@ -62,6 +63,11 @@
 
 ;; flyspell
 (setq ispell-program-name "/usr/local/bin/ispell")
+
+;; evil-org mode
+(require 'evil-org)
+(add-hook 'org-mode-hook 'evil-org-mode)
+(evil-org-set-key-theme '(navigation insert textobjects additional))
 
 ;; smooth scroll
 (require 'smooth-scrolling)
@@ -89,6 +95,16 @@
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
 (which-key-mode)
+
+;; neotree
+(setq neo-theme (if (display-graphic-p) 'ascii))
+(setq neo-smart-open t)
+(add-hook 'neotree-mode-hook
+    (lambda ()
+      (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+      (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-quick-look)
+      (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+      (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
 
 ;; ido and smex
 (require 'ido-vertical-mode)
@@ -120,3 +136,6 @@
 
 ;; Crystal
 (require 'crystal-mode)
+
+;; Latex
+(exec-path-from-shell-initialize)
