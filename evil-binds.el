@@ -45,6 +45,7 @@
           ;latex
   "lp" 'preview-buffer
   "lc" 'preview-clearout-buffer
+  "lo" 'org-toggle-latex-fragment
           ;git
   "gg" 'magit-status
   "gc" 'magit-commit

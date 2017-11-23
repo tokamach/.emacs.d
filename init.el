@@ -33,6 +33,13 @@
 (require 'cl)
 (require 'filenotify)
 
+(defun load-new-theme (theme)
+  (interactive)
+  (dolist (i custom-enabled-themes)
+    (disable-theme i))
+  (load-theme theme t)
+  (load-theme 'smart-mode-line-respectful t))
+
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
   (with-temp-buffer
@@ -41,16 +48,14 @@
 
 (defun theme-update-callback (event)
   (pcase (get-string-from-file "~/.kawaiify/theme.lock")
-    ("pink\n" (load-theme 'base16-unikitty-light t))
-    ("doll-loli\n"  (load-theme 'base16-summerfruit-light t))
-    ("purpur\n"  (load-theme 'base16-paraiso t))
-    ("sleeper\n" (load-theme 'adwaita t))
-    ("dragons\n" (load-theme 'pink-bliss t))
-    ("conman\n"  (load-theme 'base16-grayscale-light t))
-    ("catboi\n"  (load-theme 'creamsody t) (creamsody-modeline-two))
-    ("blue\n"    (load-theme 'creamsody t) (creamsody-modeline-two))
-    ("pinkish\n"   (load-theme 'birds-of-paradise-plus t))
-    (_ (load-theme 'zenburn t)))) ;fallback
+    ("pink\n"      (load-new-theme 'base16-unikitty-light))
+    ("purpur\n"    (load-new-theme 'base16-paraiso))
+    ("sleeper\n"   (load-new-theme 'adwaita))
+    ("catboi\n"    (load-new-theme 'creamsody) (creamsody-modeline-two))
+    ("blue\n"      (load-new-theme 'creamsody) (creamsody-modeline-two))
+    ("pinkish\n"   (load-new-theme 'birds-of-paradise-plus))
+    ("dark\n"      (load-new-theme 'ciapre))
+    (_             (load-new-theme 'zenburn)))) ;fallback
 
 (theme-update-callback 0)
 (file-notify-add-watch
@@ -64,11 +69,6 @@
 ;; flyspell
 (setq ispell-program-name "/usr/local/bin/ispell")
 
-;; evil-org mode
-(require 'evil-org)
-(add-hook 'org-mode-hook 'evil-org-mode)
-(evil-org-set-key-theme '(navigation insert textobjects additional))
-
 ;; smooth scroll
 (require 'smooth-scrolling)
 (smooth-scrolling-mode 1) 
@@ -76,6 +76,9 @@
 ;; stop backups
 (setq backup-inhibited t
       auto-save-default nil)
+
+;; fonts
+(set-frame-font "Anonymous Pro 12" nil t)
 
 ;; ｍｉｎｉｍａｌｉｓｍ
 (blink-cursor-mode 0)
@@ -86,15 +89,29 @@
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
-(fringe-mode '(2 . 2))
+(fringe-mode 0)
 
 ;; Smart mode line
 (setq sml/no-confirm-load-theme t)
+(setq sml/theme 'smart-mode-line-respectful)
 (sml/setup)
 
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
+(require 'evil-org)
+(add-hook 'org-mode-hook 'evil-org-mode)
+(evil-org-set-key-theme '(navigation insert textobjects additional))
+
 (which-key-mode)
+
+;; entry-plug binds
+;(require 'entry-plug)
+;(global-set-key (kbd "C-SPC") 'entry-plug-mode)
+;(entry-plug-keymap-from-list
+; '(("h" "C-b")
+;   ("j" "C-n")
+;   ("k" "C-p")
+;   ("l" "C-f")))
 
 ;; neotree
 (setq neo-theme (if (display-graphic-p) 'ascii))
