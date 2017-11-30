@@ -102,16 +102,10 @@
 (add-hook 'org-mode-hook 'evil-org-mode)
 (evil-org-set-key-theme '(navigation insert textobjects additional))
 
-(which-key-mode)
-
 ;; entry-plug binds
-;(require 'entry-plug)
-;(global-set-key (kbd "C-SPC") 'entry-plug-mode)
-;(entry-plug-keymap-from-list
-; '(("h" "C-b")
-;   ("j" "C-n")
-;   ("k" "C-p")
-;   ("l" "C-f")))
+;(load (concat user-emacs-directory "entry-plug-binds.el"))
+
+(which-key-mode)
 
 ;; neotree
 (setq neo-theme (if (display-graphic-p) 'ascii))
