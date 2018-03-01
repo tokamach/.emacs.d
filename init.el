@@ -28,8 +28,7 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-new-theme 'base16-gruvbox-light-soft)
-(sml/apply-theme 'automatic t)
+(load-theme 'base16-gruvbox-light-soft)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -60,9 +59,10 @@
 (fringe-mode 0)
 
 ;; Smart mode line
-(setq sml/no-confirm-load-theme t)
-(setq sml/theme 'smart-mode-line-respectful)
-(sml/setup)
+;(setq sml/no-confirm-load-theme t)
+;(sml/setup)
+;(sml/apply-theme 'respectful t)
+
 
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
