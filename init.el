@@ -1,8 +1,7 @@
-;; My init.el
-;; elisp is cool
+;;; My init.el
+;;; elisp is cool
 
-;; package
-;; shit
+;; package shit
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
@@ -12,8 +11,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
-;; personal
-;; config
+;;; personal config
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
 
@@ -68,9 +66,6 @@
 
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
-(require 'evil-org)
-(add-hook 'org-mode-hook 'evil-org-mode)
-(evil-org-set-key-theme '(navigation insert textobjects additional))
 
 ;; entry-plug binds
 ;(load (concat user-emacs-directory "entry-plug-binds.el"))

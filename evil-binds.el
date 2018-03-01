@@ -5,6 +5,9 @@
 ;(add-to-list 'evil-emacs-state-modes 'waifu-mode) ; stop eviling it up
 
 (require 'evil-magit)
+(require 'evil-org)
+(add-hook 'org-mode-hook 'evil-org-mode)
+(evil-org-set-key-theme '(navigation insert textobjects additional))
 
 (define-key evil-normal-state-map (kbd ";") 'smex)
 (evil-leader/set-leader "<SPC>")
