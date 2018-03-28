@@ -7,14 +7,13 @@
              '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-;; custom-variable stuff
+;;; personal config
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-
-;;; personal config
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
 
+;;; editor config
 ;; waifu-mode
 (require 'waifu)
 (waifu-keybind-to-dir
@@ -28,7 +27,6 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-;(load-theme 'base16-gruvbox-light-soft)
 (load-theme 'creamsody)
 
 ;; tramp
@@ -59,29 +57,11 @@
 (scroll-bar-mode 0)
 (fringe-mode 0)
 
-;; Smart mode line
-;(setq sml/no-confirm-load-theme t)
-;(sml/setup)
-;(sml/apply-theme 'respectful t)
-
-
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
-
 ;; entry-plug binds
 ;(load (concat user-emacs-directory "entry-plug-binds.el"))
-
 (which-key-mode)
-
-;; neotree
-(setq neo-theme (if (display-graphic-p) 'ascii))
-(setq neo-smart-open t)
-(add-hook 'neotree-mode-hook
-    (lambda ()
-      (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
-      (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-quick-look)
-      (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
-      (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
 
 ;; ido and smex
 (require 'ido-vertical-mode)
@@ -96,7 +76,7 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;;; Languages
+;;; language config
 ;; C/C++
 (setq c-default-style "linux"
       c-basic-offset 4)
