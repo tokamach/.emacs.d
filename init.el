@@ -28,7 +28,8 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'base16-gruvbox-light-soft)
+;(load-theme 'base16-gruvbox-light-soft)
+(load-theme 'creamsody)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -115,3 +116,10 @@
 
 ;; Latex
 (exec-path-from-shell-initialize)
+
+;; Java
+;(require 'eclim)
+;(add-hook 'java-mode-hook 'eclim-mode)
+;(require 'company)
+;(require 'company-emacs-eclim)
+;(company-emacs-eclim-setup)
