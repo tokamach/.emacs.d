@@ -27,7 +27,7 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'creamsody)
+(load-theme 'anti-zenburn)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -56,11 +56,12 @@
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
 (fringe-mode 0)
+(setq frame-title-format "%b")
 
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
 ;; entry-plug binds
-;(load (concat user-emacs-directory "entry-plug-binds.el"))
+;;(load (concat user-emacs-directory "entry-plug-binds.el"))
 (which-key-mode)
 
 ;; ido and smex
@@ -86,6 +87,12 @@
 (add-hook 'objc-mode-hook 'irony-mode)
 
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+;; Lisps
+;; (require 'evil-lispy)
+;; (add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
+;; (add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
+;; (add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Common Lisp
 (require 'slime)
