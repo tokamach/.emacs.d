@@ -2,7 +2,7 @@
 ;;;; just get in the fucking text editor shinji
 ;;;; -*- lexical-binding: t; -*-
 
-(defvar entry-plug-mode-map (make-sparse-keymap))
+(defvar entry-plug-mode-map (make-keymap))
 
 (defcustom entry-plug/leader "<SPC>"
   "Leader key for entry-plug mode"
