@@ -46,9 +46,7 @@
   "ry" 'copy-to-register
   "rp" 'insert-register
           ;latex
-  "lp" 'preview-buffer
-  "lc" 'preview-clearout-buffer
-  "lo" 'org-toggle-latex-fragment
+  "lp" 'org-toggle-latex-fragment
           ;git
   "gg" 'magit-status
   "gc" 'magit-commit
@@ -62,11 +60,12 @@
   "po" 'olivetti-mode
   "pc" 'company-mode
   "pf" 'fci-mode
-  "pw" 'waifu
+;;  "pw" 'waifu
   "pm" 'minimap-mode
   "pi" 'imenu-list-smart-toggle
   "pn" 'neotree-toggle
-          ;applications
-  "at" 'tetris
-  "a2" '2048-game
-  "aw" 'eww)
+  ;; avy
+  "ac" 'avy-goto-char
+  "aC" 'avy-goto-char-2
+  "aw" 'avy-goto-char-timer
+  "al" 'avy-goto-line)

@@ -27,7 +27,7 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'anti-zenburn)
+(load-theme 'base16-phd)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -57,6 +57,10 @@
 (scroll-bar-mode 0)
 (fringe-mode 0)
 (setq frame-title-format "%b")
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+;(add-to-list 'default-frame-alist '(ns-appearance . dark))
+(add-to-list 'default-frame-alist '(ns-appearance . light))
 
 ;; Evil binds
 (load "~/.emacs.d/evil-binds.el")
