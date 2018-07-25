@@ -33,7 +33,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (company-php php-mode weechat evil-lispy lispy rust-mode all-the-icons svg-clock tao-theme evil-org evil-vimish-fold exec-path-from-shell evil-magit flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony sudoku symon rainbow-delimiters imenu-list swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
+    (geiser crystal-mode company-php php-mode weechat evil-lispy lispy rust-mode all-the-icons svg-clock tao-theme evil-org evil-vimish-fold exec-path-from-shell evil-magit flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony sudoku symon rainbow-delimiters imenu-list swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key smart-tabs-mode evil-leader xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game smex ido-vertical-mode olivetti fountain-mode creamsody-theme ## evil-visual-mark-mode)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
