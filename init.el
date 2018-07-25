@@ -93,24 +93,15 @@
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; Lisps
-;; (require 'evil-lispy)
-;; (add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
-;; (add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
-;; (add-hook 'lisp-mode-hook #'evil-lispy-mode)
+(require 'evil-lispy)
+(add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
+(add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
+(add-hook 'scheme-mode-hook #'evil-lispy-mode)
+(add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Common Lisp
 (require 'slime)
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
-;; Crystal
-(require 'crystal-mode)
-
 ;; Latex
 (exec-path-from-shell-initialize)
-
-;; Java
-;(require 'eclim)
-;(add-hook 'java-mode-hook 'eclim-mode)
-;(require 'company)
-;(require 'company-emacs-eclim)
-;(company-emacs-eclim-setup)
