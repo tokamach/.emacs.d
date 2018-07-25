@@ -1,4 +1,5 @@
 ;; evil and evil-leader binds
+(setq evil-want-C-u-scroll t)
 (global-evil-leader-mode)
 (require 'evil)
 (evil-mode 1)
@@ -10,6 +11,7 @@
 (evil-org-set-key-theme '(navigation insert textobjects additional))
 
 (define-key evil-normal-state-map (kbd ";") 'smex)
+(define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-page-up)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
   ";" 'smex
