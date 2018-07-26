@@ -37,7 +37,9 @@
 
 ;; smooth scroll
 (require 'smooth-scrolling)
-(smooth-scrolling-mode 1) 
+(smooth-scrolling-mode 1)
+
+(global-undo-tree-mode)
 
 ;; stop backups
 (setq backup-inhibited t

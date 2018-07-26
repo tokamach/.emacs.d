@@ -41,12 +41,10 @@
   ("i" backward-word)
   ("o" forward-word)
 
-  ("y" scroll-up-command)
-  ("n" scroll-down-command)
+  ("y" scroll-down-command)
+  ("n" scroll-up-command)
   ("Y" beginning-of-buffer)
   ("N" end-of-buffer)
-
-  ("u" undo) ;;TODO: better undo location
 
   ("C-;" nil :color blue)
 
@@ -63,6 +61,9 @@
   ("x" kill-region)
   ("c" kill-ring-save)
   ("v" yank)
+
+  ("t" undo-tree-undo)
+  ("b" undo-tree-redo)
 
   ("<SPC>" hydra-cmd/body :color blue))
 
