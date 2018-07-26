@@ -24,9 +24,13 @@
   ("f" ido-find-file)
   ("p" (defhydra hydra-modes ()
 	 ("c" company-mode)
-	 ("r" rainbow-delimiters-mode))))
+	 ("r" rainbow-delimiters-mode)
+	 ("l" lispy-mode))
+   :color blue))
 
-(defhydra hydra-modal (:color amaranth)
+(defhydra hydra-modal (global-map
+		       "C-;"
+		       :color amaranth)
   "hydra for movement and editing"
   ;; Right hand: movement commands
   ("h" backward-char)
@@ -36,6 +40,11 @@
 
   ("i" backward-word)
   ("o" forward-word)
+
+  ("y" scroll-up-command)
+  ("n" scroll-down-command)
+  ("Y" beginning-of-buffer)
+  ("N" end-of-buffer)
 
   ("u" undo) ;;TODO: better undo location
 
@@ -57,4 +66,4 @@
 
   ("<SPC>" hydra-cmd/body :color blue))
 
-(global-set-key (kbd "C-;") 'hydra-modal/body)
+;; (global-set-key (kbd "C-;") 'hydra-modal/body)
