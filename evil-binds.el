@@ -55,8 +55,6 @@
   "gp" 'magit-push
   "gs" 'magit-stage
           ;minor modes
-;;  "pp" 'parinfer-mode
-;;  "pt" 'parinfer-toggle-mode
   "ps" 'show-paren-mode
   "pr" 'rainbow-delimiters-mode
   "po" 'olivetti-mode
