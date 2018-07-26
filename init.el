@@ -63,9 +63,9 @@
 (add-to-list 'default-frame-alist '(ns-appearance . light))
 
 ;; Evil binds
-(load "~/.emacs.d/evil-binds.el")
+;; (load "~/.emacs.d/evil-binds.el")
 ;; entry-plug binds
-;;(load (concat user-emacs-directory "entry-plug-binds.el"))
+(load "~/.emacs.d/entry-plug-binds.el")
 (which-key-mode)
 
 ;; ido and smex
@@ -93,11 +93,11 @@
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; Lisps
-(require 'evil-lispy)
-(add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
-(add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
-(add-hook 'scheme-mode-hook #'evil-lispy-mode)
-(add-hook 'lisp-mode-hook #'evil-lispy-mode)
+;; (require 'evil-lispy)
+;; (add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
+;; (add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
+;; (add-hook 'scheme-mode-hook #'evil-lispy-mode)
+;; (add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Common Lisp
 (require 'slime)
