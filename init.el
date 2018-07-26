@@ -65,7 +65,9 @@
 ;; Evil binds
 ;; (load "~/.emacs.d/evil-binds.el")
 ;; entry-plug binds
-(load "~/.emacs.d/entry-plug-binds.el")
+;; (load "~/.emacs.d/entry-plug-binds.el")
+;; modal-soul, my hydras
+(load "~/.emacs.d/modal-soul.el")
 (which-key-mode)
 
 ;; ido and smex
