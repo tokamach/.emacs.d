@@ -27,7 +27,7 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'base16-phd)
+(load-theme 'base16-atelier-sulphurpool)
 
 ;; tramp
 (setq tramp-default-method "ssh")
