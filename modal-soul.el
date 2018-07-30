@@ -27,9 +27,13 @@
 	 ("r" rainbow-delimiters-mode)
 	 ("l" lispy-mode))))
 
-(defhydra hydra-modal (global-map
-		       "C-;"
-		       :color amaranth)
+(defun hydra-modal/pre ()
+  (setq cursor-type 'hollow))
+
+(defun hydra-modal/post ()
+  (setq cursor-type 'box))
+
+(defhydra hydra-modal (:color amaranth :hint none :pre hydra-modal/pre :post hydra-modal/post)
   "movement and editing"
   ;; Right hand: movement commands
   ("h" backward-char)
@@ -68,4 +72,4 @@
 
   ("<SPC>" hydra-cmd/body :color blue))
 
-;; (global-set-key (kbd "C-;") 'hydra-modal/body)
+(global-set-key (kbd "C-;") 'hydra-modal/body)
