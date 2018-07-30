@@ -37,6 +37,8 @@
   ("k" previous-line)
   ("l" forward-char)
 
+  ("u" beginning-of-line)
+  ("p" end-of-line)
   ("i" backward-word)
   ("o" forward-word)
 
