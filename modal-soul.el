@@ -1,7 +1,7 @@
 (require 'hydra)
 
 (defhydra hydra-window ()
-  "Hydra for window commands"
+  "window commands"
   ("-" split-window-below)
   ("/" split-window-right )
   ("h" windmove-left)
@@ -18,20 +18,19 @@
   ("L" buf-move-right))
 
 (defhydra hydra-cmd (:color blue)
-  "Command commands"
+  "command commands"
   ("w" hydra-window/body)
   ("g" magit-status)
   ("f" ido-find-file)
-  ("p" (defhydra hydra-modes ()
+  ("p" (defhydra hydra-modes (:color blue)
 	 ("c" company-mode)
 	 ("r" rainbow-delimiters-mode)
-	 ("l" lispy-mode))
-   :color blue))
+	 ("l" lispy-mode))))
 
 (defhydra hydra-modal (global-map
 		       "C-;"
 		       :color amaranth)
-  "hydra for movement and editing"
+  "movement and editing"
   ;; Right hand: movement commands
   ("h" backward-char)
   ("j" next-line)
