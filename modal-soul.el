@@ -17,15 +17,21 @@
   ("K" buf-move-up)
   ("L" buf-move-right))
 
+(defhydra hydra-modes (:color blue)
+  ("c" company-mode)
+  ("r" rainbow-delimiters-mode)
+  ("l" lispy-mode)
+  ("s" show-paren-mode)
+  ("o" olivetti-mode)
+  ("i" imenu-smart-list-toggle))
+
 (defhydra hydra-cmd (:color blue)
   "command commands"
   ("w" hydra-window/body)
   ("g" magit-status)
   ("f" ido-find-file)
-  ("p" (defhydra hydra-modes (:color blue)
-	 ("c" company-mode)
-	 ("r" rainbow-delimiters-mode)
-	 ("l" lispy-mode))))
+  ("b" ido-switch-buffer)
+  ("p" hydra-modes/body))
 
 (defun hydra-modal/pre ()
   (setq cursor-type 'hollow))
