@@ -1,6 +1,6 @@
 (require 'hydra)
 
-(defhydra hydra-window ()
+(defhydra hydra-window
   "window commands"
   ("-" split-window-below)
   ("/" split-window-right )
@@ -11,7 +11,8 @@
   ("w" other-window)
   ("c" delete-window)
   ("b" balance-windows)
-  ("f" toggle-frame-fullscreen)
+  ("f" nil :color blue)
+  ("F" toggle-frame-fullscreen)
   ("H" buf-move-left)
   ("J" buf-move-down)
   ("K" buf-move-up)
@@ -23,7 +24,8 @@
   ("l" lispy-mode)
   ("s" show-paren-mode)
   ("o" olivetti-mode)
-  ("i" imenu-smart-list-toggle))
+  ("i" imenu-smart-list-toggle)
+  ("t" treemacs))
 
 (defhydra hydra-cmd (:color blue)
   "command commands"
@@ -60,7 +62,7 @@
   ("C-;" nil :color blue)
 
   ;; Left hand: editing commands
-  ("a" smex)
+  ("a" counsel-M-x)
   ("s" delete-backward-char)
   ("d" delete-forward-char)
   ("f" nil :color blue)

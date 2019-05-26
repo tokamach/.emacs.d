@@ -27,7 +27,7 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'base16-black-metal)
+(load-theme 'doom-peacock)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -64,31 +64,21 @@
 ;(add-to-list 'default-frame-alist '(ns-appearance . dark))
 (add-to-list 'default-frame-alist '(ns-appearance . light))
 
-;; Evil binds
-;; (load "~/.emacs.d/evil-binds.el")
-;; entry-plug binds
-;; (load "~/.emacs.d/entry-plug-binds.el")
+;; better modeline
+(require 'doom-modeline)
+(doom-modeline-mode 1)
+
 ;; modal-soul, my hydras
 (load "~/.emacs.d/modal-soul.el")
 (which-key-mode)
 
-;; ido and smex
-(require 'ido-vertical-mode)
-(ido-mode 1)
-(ido-vertical-mode 1)
-(setq ido-vertical-define-keys 'C-n-and-C-p-only)
-
-(require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(global-set-key (kbd "M-x") 'counsel-M-x)
 
 ;;; language config
 ;; C/C++
 (setq c-default-style "linux"
       c-basic-offset 4)
+
 
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
@@ -97,11 +87,11 @@
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; Lisps
-;; (require 'evil-lispy)
-;; (add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
-;; (add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
-;; (add-hook 'scheme-mode-hook #'evil-lispy-mode)
-;; (add-hook 'lisp-mode-hook #'evil-lispy-mode)
+(require 'evil-lispy)
+(add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
+(add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
+(add-hook 'scheme-mode-hook #'evil-lispy-mode)
+(add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Common Lisp
 (require 'slime)
