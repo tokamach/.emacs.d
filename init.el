@@ -27,7 +27,8 @@
    ("p" "~/Pictures/animu/proggybooks")))
 
 ;; theme
-(load-theme 'doom-peacock)
+(load-theme 'ciapre)
+(doom-themes-treemacs-config)
 
 ;; tramp
 (setq tramp-default-method "ssh")
@@ -72,26 +73,49 @@
 (load "~/.emacs.d/modal-soul.el")
 (which-key-mode)
 
-(global-set-key (kbd "M-x") 'counsel-M-x)
+;; avy bindings
+(global-set-key (kbd "C-:") 'avy-goto-line)
+
+;; ivy/counsel/swiper
+(global-set-key "\C-s" 'swiper)
+(counsel-mode)
+
+;; org-mode
+(org-babel-do-load-languages
+    'org-babel-load-languages
+    '((dot . t)))
 
 ;;; language config
 ;; C/C++
 (setq c-default-style "linux"
       c-basic-offset 4)
 
+;; (add-hook 'c++-mode-hook 'irony-mode)
+;; (add-hook 'c-mode-hook 'irony-mode)
+;; (add-hook 'objc-mode-hook 'irony-mode)
+;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
+(defun tokamach/c-c++-hook ()
+  "Personal C/C++ hook."
+  (setq company-backends
+	(cons 'company-capf
+	      (remove 'company-capf company-backends)))
+  ;; (eglot-ensure)
+  )
 
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(add-hook 'c-mode-hook 'tokamach/c-c++-hook)
 
 ;; Lisps
-(require 'evil-lispy)
-(add-hook 'emacs-lisp-mode-hook  #'evil-lispy-mode)
-(add-hook 'common-lisp-mode-hook #'evil-lispy-mode)
-(add-hook 'scheme-mode-hook #'evil-lispy-mode)
-(add-hook 'lisp-mode-hook #'evil-lispy-mode)
+(defun tokamach/lisp-hook ()
+  "Personal Lisp hook."
+  (lispy-mode)
+  (rainbow-delimiters-mode)
+  (company-mode))
+
+(add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
+(add-hook 'common-lisp-mode-hook #'tokamach/lisp-hook)
+(add-hook 'scheme-mode-hook      #'tokamach/lisp-hook)
+(add-hook 'lisp-mode-hook        #'tokamach/lisp-hook)
 
 ;; Common Lisp
 (require 'slime)

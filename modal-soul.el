@@ -1,6 +1,12 @@
 (require 'hydra)
 
-(defhydra hydra-window
+(defhydra hydra-avy ()
+  "avy commands"
+  ("w" avy-goto-word-1)
+  ("W" avy-goto-word-2)
+  ("l" avy-goto-line))
+
+(defhydra hydra-window ()
   "window commands"
   ("-" split-window-below)
   ("/" split-window-right )
@@ -31,8 +37,8 @@
   "command commands"
   ("w" hydra-window/body)
   ("g" magit-status)
-  ("f" ido-find-file)
-  ("b" ido-switch-buffer)
+  ("f" counsel-find-file)
+  ("b" ivy-switch-buffer)
   ("p" hydra-modes/body))
 
 (defun hydra-modal/pre ()
@@ -81,3 +87,4 @@
   ("<SPC>" hydra-cmd/body :color blue))
 
 (global-set-key (kbd "C-;") 'hydra-modal/body)
+(global-set-key (kbd "C-l") 'hydra-avy/body)
