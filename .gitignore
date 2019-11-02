@@ -1,3 +1,5 @@
+.DS_Store
+
 auto-save-list
 elpa
 eshell
@@ -9,5 +11,8 @@ xkcd
 tramp
 projectile-bookmarks.eld
 abbrev_defs
+.cache
 
-.DS_Store
+*.elc
+conf.el
+#*#

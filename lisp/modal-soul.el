@@ -38,7 +38,7 @@
   ("w" hydra-window/body)
   ("g" magit-status)
   ("f" counsel-find-file)
-  ("b" ivy-switch-buffer)
+  ("b" counsel-switch-buffer)
   ("p" hydra-modes/body))
 
 (defun hydra-modal/pre ()
@@ -87,4 +87,4 @@
   ("<SPC>" hydra-cmd/body :color blue))
 
 (global-set-key (kbd "C-;") 'hydra-modal/body)
-(global-set-key (kbd "C-l") 'hydra-avy/body)
+(global-set-key (kbd "C-:") 'hydra-avy/body)
