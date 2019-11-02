@@ -48,11 +48,23 @@ This is my init.el, except its written in org mode.
 #+END_SRC
 
 *** themes, font, prettifying
-    Eventually I'll add a nice little dark/light mode switcher. For now we just load the theme...
+    Pick a theme from the list of good themes.
 #+BEGIN_SRC emacs-lisp
-  ;; theme
-  (load-theme 'base16-atlas)
-  ;; (load-theme 'base16-atelier-estuary-light)
+  (defvar tokamach/themes '(base16-atlas
+			    base16-paraiso
+			    base16-atelier-estuary-light
+			    plan9))
+
+  (defun tokamach/pick-theme ()
+    "Present a list of themes for user to pick"
+    (interactive)
+    (ivy-read
+     "Pick theme:"
+     tokamach/themes
+     :action (lambda (theme)
+	       (progn (dolist (i custom-enabled-themes)
+			(disable-theme i))
+		      (load-theme (intern theme))))))
 #+END_SRC
 
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
