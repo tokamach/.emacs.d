@@ -1,1 +1,1 @@
-/Users/tom/.emacs.d/conf.org
+conf.org
