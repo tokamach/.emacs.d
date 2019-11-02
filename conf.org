@@ -7,7 +7,7 @@ This is my init.el, except its written in org mode.
 
 ** init.el
    =init.el= is a short file that simply tangles, loads, and compiles the =conf.org= file (/this one/).
-#+INCLUDE: "init.el" src emacs-lisp
+#+INCLUDE: "./init.el" src emacs-lisp :tangle no
 
 * emacs setup
 ** packages
