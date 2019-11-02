@@ -119,7 +119,7 @@
 #+END_SRC
 
 ** Language Config
-   Finally we've transformed the ancient magicks of emacs from a 500 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
+   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
 *** Org mode
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
