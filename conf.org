@@ -3,8 +3,11 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
-* My init.org
-  This is my init.el, except its written in org mode
+This is my init.el, except its written in org mode. 
+
+** init.el
+   =init.el= is a short file that simply tangles, loads, and compiles the =conf.org= file (/this one/).
+#+INCLUDE: "init.el" src emacs-lisp
 
 * emacs setup
 ** packages
