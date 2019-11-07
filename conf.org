@@ -104,6 +104,30 @@ This is my init.el, except its written in org mode.
   (doom-modeline-mode 1)
 #+END_SRC
 
+*** Homepage
+Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'dashboard)
+
+  (let ((imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
+	(random-choice (lambda (elems)
+			 (let* ((size (length elems))
+				(index (random size)))
+			   (nth index elems)))))
+    (setq dashboard-startup-banner (funcall random-choice imgs)))
+
+  (setq dashboard-banner-logo-title "HIT UP EMACS BOYEEE")
+  (setq dashboard-center-content t)
+  (setq show-week-agenda-p t)
+  (setq dashboard-items '((recents  . 5)
+			  (agenda   . 5)
+			  (projects . 5)))
+
+  (dashboard-setup-startup-hook)
+  (setq inital-buffer-choice (lambda () (get-buffer "*dashboard*")))
+#+END_SRC
+
 *** editor functionality
     Most of this is pretty self-explanatory. Tramp wants to use ssh, ispell exists actually(thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
 
@@ -217,6 +241,7 @@ This is my init.el, except its written in org mode.
     "Personal Lisp hook."
     (lispy-mode)
     (rainbow-delimiters-mode)
+    (show-paren-mode)
     (company-mode))
 
   (add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
