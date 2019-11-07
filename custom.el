@@ -36,9 +36,9 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(objed-cursor-color "#ff5d38")
  '(org-agenda-files
-   '("~/doc/org/personal.org" "~/os-project/notes.org" "/Users/tom/doc/uni/y3/300.org" "/Users/tom/doc/uni/y3/306.org" "/Users/tom/doc/uni/y3/311.org" "/Users/tom/doc/uni/y3/361.org" "/Users/tom/doc/uni/y3/366.org"))
+   '("~/.emacs.d/conf.org" "/Users/tom/doc/uni/y3/366.org" "~/doc/org/personal.org" "~/os-project/notes.org" "/Users/tom/doc/uni/y3/300.org" "/Users/tom/doc/uni/y3/306.org" "/Users/tom/doc/uni/y3/311.org" "/Users/tom/doc/uni/y3/361.org"))
  '(package-selected-packages
-   '(direx org-sidebar eglot doom-modeline neotree counsel treemacs-magit treemacs-projectile treemacs doom-themes sr-speedbar flycheck-irony company-irony company-c-headers auto-dim-other-buffers picpocket erlang undo-tree geiser crystal-mode company-php php-mode weechat lispy rust-mode all-the-icons svg-clock tao-theme exec-path-from-shell flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony symon rainbow-delimiters imenu-list swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key smart-tabs-mode xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game smex ido-vertical-mode olivetti fountain-mode creamsody-theme ##))
+   '(matlab-mode direx org-sidebar eglot doom-modeline neotree counsel treemacs-magit treemacs-projectile treemacs doom-themes sr-speedbar flycheck-irony company-irony company-c-headers auto-dim-other-buffers picpocket erlang undo-tree geiser crystal-mode company-php php-mode weechat lispy rust-mode all-the-icons svg-clock tao-theme exec-path-from-shell flycheck json-mode buffer-move yaml-mode smooth-scrolling xah-fly-keys irony symon rainbow-delimiters imenu-list swift3-mode auctex base16-theme lua-mode web-mode zenburn-theme solarized-theme birds-of-paradise-plus-theme fill-column-indicator projectile company-auctex latex-pretty-symbols gruvbox-theme slime-company slime which-key smart-tabs-mode xkcd fireplace company parinfer darktooth-theme selectric-mode markdown-mode anti-zenburn-theme magit 2048-game smex ido-vertical-mode olivetti fountain-mode creamsody-theme ##))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#1A3734")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -87,4 +87,25 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fixed-pitch ((t (:family "Anonymous Pro" :slant normal :weight normal :height 1.0 :width normal))))
+ '(org-block ((t (:inherit fixed-pitch))))
+ '(org-code ((t (:inherit (shadow fixed-pitch)))))
+ '(org-document-info ((t (:foreground "dark orange"))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+ '(org-level-1 ((t (:inherit default :weight bold :foreground "Black" (:font "New York") :height 1.4))))
+ '(org-level-2 ((t (:inherit default :weight bold :foreground "Black" (:font "New York") :height 1.3))))
+ '(org-level-3 ((t (:inherit default :weight bold :foreground "Black" (:font "New York") :height 1.2))))
+ '(org-level-4 ((t (:inherit default :weight bold :foreground "Black" (:font "New York") :height 1.1))))
+ '(org-level-5 ((t (:inherit default :weight bold :foreground "Black" (:font "New York")))))
+ '(org-level-6 ((t (:inherit default :weight bold :foreground "Black" (:font "New York")))))
+ '(org-level-7 ((t (:inherit default :weight bold :foreground "Black" (:font "New York")))))
+ '(org-level-8 ((t (headline variable-tuple))))
+ '(org-link ((t (:foreground "royal blue" :underline t))))
+ '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-property-value ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+ '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+ '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+ '(variable-pitch ((t (:family "New York" :height 140 :weight light)))))

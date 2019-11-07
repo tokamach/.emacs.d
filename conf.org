@@ -1,4 +1,4 @@
-#+TITLE: init.org
+#+TITLE: conf.org
 #+AUTHOR: Tom Hutchings
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
@@ -48,7 +48,8 @@ This is my init.el, except its written in org mode.
 #+END_SRC
 
 *** themes, font, prettifying
-    Pick a theme from the list of good themes.
+    Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
+
 #+BEGIN_SRC emacs-lisp
   (defvar tokamach/themes '(base16-atlas
 			    base16-paraiso
@@ -67,13 +68,21 @@ This is my init.el, except its written in org mode.
 		      (load-theme (intern theme))))))
 #+END_SRC
 
+    Of course at startup we still want an actual theme to be loaded.
+
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'base16-atelier-estuary-light)
+#+END_SRC
+
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
+
 #+BEGIN_SRC emacs-lisp
   ;; fonts
   (set-frame-font "Anonymous Pro 13" nil t)
 #+END_SRC
 
-    This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em. I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /GNU Emacs, one component of the GNU/Linux operating system/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
+    This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em. I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
+
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
   (setq visible-bell t)
@@ -120,16 +129,16 @@ This is my init.el, except its written in org mode.
     Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy and setting up the ivy/counsel/swiper trinity.
 
 #+BEGIN_SRC emacs-lisp
-;; modal-soul, my hydras
-(load "~/.emacs.d/lisp/modal-soul.el")
-(which-key-mode)
+  ;; modal-soul, my hydras
+  (load "~/.emacs.d/lisp/modal-soul.el")
+  (which-key-mode)
 
-;; avy bindings
-(global-set-key (kbd "C-l") 'avy-goto-line)
+  ;; avy bindings
+  ;; (global-set-key (kbd "C-l") 'avy-goto-line)
 
-;; ivy/counsel/swiper
-(global-set-key "\C-s" 'swiper)
-(counsel-mode)
+  ;; ivy/counsel/swiper
+  (global-set-key "\C-s" 'swiper)
+  (counsel-mode)
 #+END_SRC
 
 ** Language Config
@@ -137,14 +146,50 @@ This is my init.el, except its written in org mode.
 
 *** Org mode
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
-    I'm not really sure what the babel thing is for lol.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-restore-windows-after-quit 1)
+  (setq org-agenda-restore-windows-after-quit 1)
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((dot . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)))
+
+  (setq org-hide-emphasis-markers t)
+
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "New York" :height 140 :weight light))))
+   '(fixed-pitch ((t (:family "Anonymous Pro" :slant normal :weight normal :height 1.0 :width normal)))))
+
+  (add-hook 'org-mode-hook 'variable-pitch-mode)
+
+  (let* ((variable-tuple '(:font "New York"))
+	 (base-font-color (face-foreground 'default nil 'default))
+	 (headline `(:inherit default :weight bold :foreground ,base-font-color)))
+
+    (custom-theme-set-faces
+     'user
+     '(org-level-8 ((t (headline variable-tuple))))
+     `(org-level-7 ((t (,@headline ,variable-tuple))))
+     `(org-level-6 ((t (,@headline ,variable-tuple))))
+     `(org-level-5 ((t (,@headline ,variable-tuple))))
+     `(org-level-4 ((t (,@headline ,variable-tuple :height 1.1))))
+     `(org-level-3 ((t (,@headline ,variable-tuple :height 1.2))))
+     `(org-level-2 ((t (,@headline ,variable-tuple :height 1.3))))
+     `(org-level-1 ((t (,@headline ,variable-tuple :height 1.4))))
+
+     '(org-block                 ((t (:inherit fixed-pitch))))
+     '(org-code                  ((t (:inherit (shadow fixed-pitch)))))
+     '(org-document-info         ((t (:foreground "dark orange"))))
+     '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+     '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+     '(org-link                  ((t (:foreground "royal blue" :underline t))))
+     '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+     '(org-property-value        ((t (:inherit fixed-pitch))) t)
+     '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+     '(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
+     '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+     '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))
 #+END_SRC
 
 *** C/C++
@@ -168,20 +213,21 @@ This is my init.el, except its written in org mode.
     The language of the gods finally gets its turn. Do I want intelligent context dependent structural editing? *YES*. Do I want rainbows all over my parentheses? *YES*. Gimme that good shit.
 
 #+BEGIN_SRC emacs-lisp
-(defun tokamach/lisp-hook ()
-  "Personal Lisp hook."
-  (lispy-mode)
-  (rainbow-delimiters-mode)
-  (company-mode))
+  (defun tokamach/lisp-hook ()
+    "Personal Lisp hook."
+    (lispy-mode)
+    (rainbow-delimiters-mode)
+    (company-mode))
 
-(add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
-(add-hook 'common-lisp-mode-hook #'tokamach/lisp-hook)
-(add-hook 'scheme-mode-hook      #'tokamach/lisp-hook)
-(add-hook 'lisp-mode-hook        #'tokamach/lisp-hook)
+  (add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
+  (add-hook 'common-lisp-mode-hook #'tokamach/lisp-hook)
+  (add-hook 'scheme-mode-hook      #'tokamach/lisp-hook)
+  (add-hook 'lisp-mode-hook        #'tokamach/lisp-hook)
 
-;; Common Lisp
-(require 'slime)
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
+  ;; Common Lisp
+  (require 'slime)
+  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  (slime-setup '(slime-fancy slime-company))
 #+END_SRC
 
 *** Latex
