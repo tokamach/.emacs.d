@@ -18,6 +18,12 @@ This is my init.el, except its written in org mode.
 #+END_SRC
 
 ** personal files
+   Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
+
+#+BEGIN_SRC emacs-lisp
+  (setq default-directory (concat (getenv "HOME") "/"))
+#+END_SRC
+
    The =custom-file= must be set so as not to pollute our init.el with =custom-set-definitions=.
    In the =/lisp= directory I keep any standalone lisp files, such as major and minor modes I wrote.
    =/colors= has any custom color schemes I've picked up that don't exist in melpa.
@@ -132,21 +138,22 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     Most of this is pretty self-explanatory. Tramp wants to use ssh, ispell exists actually(thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
 
 #+BEGIN_SRC emacs-lisp
-;; tramp
-(setq tramp-default-method "ssh")
+  ;; tramp
+  (setq tramp-default-method "ssh")
 
-;; flyspell
-(setq ispell-program-name "/usr/local/bin/ispell")
+  ;; flyspell
+  (setq ispell-program-name "/usr/local/bin/ispell")
 
-;; smooth scroll
-(require 'smooth-scrolling)
-(smooth-scrolling-mode 1)
+  ;; smooth scroll
+  (require 'smooth-scrolling)
+  (smooth-scrolling-mode 1)
 
-(global-undo-tree-mode)
+  (global-undo-tree-mode)
 
-;; stop backups
-(setq backup-inhibited t
-      auto-save-default nil)
+  ;; stop backups
+  (setq backup-inhibited t
+	make-backup-files nil
+	auto-save-default nil)
 #+END_SRC
 
 *** editor key bindings
@@ -261,4 +268,11 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 (exec-path-from-shell-initialize)
 (setq TeX-parse-self t) ; Enable parse on load.
 (setq TeX-auto-save t) ; Enable parse on save.
+#+END_SRC
+*** Matlab
+    Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
+(setq matlab-shell-command-switches (list "-nodesktop"))
 #+END_SRC
