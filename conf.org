@@ -65,6 +65,7 @@ This is my init.el, except its written in org mode.
 
 			    ;; Light Themes
 			    base16-atelier-estuary-light
+			    parchment
 			    plan9
 			    anti-zenburn))
 
@@ -90,7 +91,7 @@ This is my init.el, except its written in org mode.
     Of course at startup we still want an actual theme to be loaded.
 
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'base16-atelier-estuary-light)
+  (load-theme 'parchment)
 #+END_SRC
 
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
@@ -196,12 +197,8 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 *** Org mode
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lispj
   (setq org-agenda-restore-windows-after-quit 1)
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)))
 
   (setq org-hide-emphasis-markers t)
 
@@ -212,37 +209,37 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 
-  (let* ((variable-tuple '(:font "New York"))
-	 (base-font-color (face-foreground 'default nil 'default))
-	 (headline `(:inherit default :weight bold :foreground ,base-font-color)))
+  (advice-add 'load-theme :after #'(lambda (&rest r)
+				     (let* ((variable-tuple '(:font "New York"))
+					    (base-font-color (face-foreground 'default nil 'default))
+					    (headline `(:inherit default :weight bold :foreground ,base-font-color)))
+				       (custom-theme-set-faces
+					'user
+					`(org-level-8 ((t (,@headline ,variable-tuple))))
+					`(org-level-7 ((t (,@headline ,variable-tuple))))
+					`(org-level-6 ((t (,@headline ,variable-tuple))))
+					`(org-level-5 ((t (,@headline ,variable-tuple))))
+					`(org-level-4 ((t (,@headline ,variable-tuple :height 1.2))))
+					`(org-level-3 ((t (,@headline ,variable-tuple :height 1.4))))
+					`(org-level-2 ((t (,@headline ,variable-tuple :height 1.6))))
+					`(org-level-1 ((t (,@headline ,variable-tuple :height 1.8))))
 
-    (custom-theme-set-faces
-     'user
-     `(org-level-8 ((t (,@headline ,variable-tuple))))
-     `(org-level-7 ((t (,@headline ,variable-tuple))))
-     `(org-level-6 ((t (,@headline ,variable-tuple))))
-     `(org-level-5 ((t (,@headline ,variable-tuple))))
-     `(org-level-4 ((t (,@headline ,variable-tuple :height 1.2))))
-     `(org-level-3 ((t (,@headline ,variable-tuple :height 1.4))))
-     `(org-level-2 ((t (,@headline ,variable-tuple :height 1.6))))
-     `(org-level-1 ((t (,@headline ,variable-tuple :height 1.8))))
+					'(org-block                 ((t (:inherit fixed-pitch))))
+					'(org-code                  ((t (:inherit (shadow fixed-pitch)))))
+					'(org-document-info         ((t (:foreground "dark orange"))))
+					'(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+					'(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+					'(org-link                  ((t (:foreground "royal blue" :underline t))))
+					'(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+					'(org-property-value        ((t (:inherit fixed-pitch))) t)
+					'(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+					'(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
+					'(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+					'(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))))
 
-     '(org-block                 ((t (:inherit fixed-pitch))))
-     '(org-code                  ((t (:inherit (shadow fixed-pitch)))))
-     '(org-document-info         ((t (:foreground "dark orange"))))
-     '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-     '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-     '(org-link                  ((t (:foreground "royal blue" :underline t))))
-     '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-     '(org-property-value        ((t (:inherit fixed-pitch))) t)
-     '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-     '(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
-     '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-     '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))
-
-     (require 'org-bullets)
-     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SRC
+  (require 'org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SR
 
 *** C/C++
     The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
