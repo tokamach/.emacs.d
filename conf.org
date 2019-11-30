@@ -197,7 +197,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 *** Org mode
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
 
-#+BEGIN_SRC emacs-lispj
+#+BEGIN_SRC emacs-lisp
   (setq org-agenda-restore-windows-after-quit 1)
 
   (setq org-hide-emphasis-markers t)
@@ -239,23 +239,23 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SR
+#+END_SRC
 
 *** C/C++
     The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
     The mode hook was to set up eglot, but since that's proved very difficult in OS dev stuff, and my main C programming is for OS dev, I just disabled it until I can be bothered.
 #+BEGIN_SRC emacs-lisp
-(setq c-default-style "linux"
-      c-basic-offset 4)
+  (setq c-default-style "linux"
+	c-basic-offset 4)
 
-(defun tokamach/c-c++-hook ()
-  "Personal C/C++ hook."
-  (setq company-backends
-	(cons 'company-capf
-	      (remove 'company-capf company-backends)))
-	      (eglot-ensure))
+  (defun tokamach/c-c++-hook ()
+    "Personal C/C++ hook."
+    (setq company-backends
+	  (cons 'company-capf
+		(remove 'company-capf company-backends)))
+		(eglot-ensure))
 
-;(add-hook 'c-mode-hook 'tokamach/c-c++-hook)
+  ;(add-hook 'c-mode-hook 'tokamach/c-c++-hook)
 #+END_SRC
 
 *** Lisps
