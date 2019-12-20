@@ -55,6 +55,12 @@
   ("k" previous-line)
   ("l" forward-char)
 
+  ("H" (backward-char 8))
+  ("J" (forward-line  8))
+  ("K" (forward-line -8))
+  ("L" (forward-char  8))
+      
+
   ("u" beginning-of-line)
   ("p" end-of-line)
   ("i" backward-word)

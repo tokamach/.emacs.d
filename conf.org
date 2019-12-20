@@ -137,7 +137,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 			   (nth index elems)))))
     (setq dashboard-startup-banner (funcall random-choice imgs)))
 
-  (setq dashboard-banner-logo-title "HIT UP EMACS BOYEEE")
+  (setq dashboard-banner-logo-title "You're slacking off instead of writing Lisp? Pretty cringe bro.")
   (setq dashboard-center-content t)
   (setq show-week-agenda-p t)
   (setq dashboard-items '((recents  . 5)
