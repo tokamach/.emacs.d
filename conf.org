@@ -10,11 +10,38 @@ This is my init.el, except its written in org mode.
 
 * Emacs setup
 ** Packages
+   We now use a combination of use-package and straight.el to manage packages. This gives a nice functional/declarative style of package management. Way better than trying to remember what is installed on which computer, and having to constantly call =package-install-selected-packages= on every new machine.
+
+   This is the bootstrap code for straight.el
 #+BEGIN_SRC emacs-lisp
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+END_SRC
+
+*** Themes and Visual stuff
+#+BEGIN_SRC emacs-lisp
+  (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
+    (mapc #'straight-use-package theme-packages)) 
+
+    (straight-use-package 'doom-modeline)
+    (straight-use-package 'olivetti)
+    (straight-use-package 'all-the-icons)
+#+END_SRC
+
+*** Org stuff
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'org-bullets)
+(straight-use-package 'org-sidebar)
 #+END_SRC
 
 ** Local Files
@@ -80,18 +107,18 @@ This is my init.el, except its written in org mode.
      :action (lambda (theme)
 	       (progn ;; (mapc #'disable-theme custom-enabled-themes)
 		 (dolist (i custom-enabled-themes) (disable-theme i))
-		 (load-theme (intern theme))
+		 (load-theme (intern theme) t)
 		 (fringe-mode 0)))
      :update-fn (lambda ()
 		  (progn (mapc #'disable-theme custom-enabled-themes)
-			 (load-theme (nth ivy--index tokamach/themes) :no-confirm)
+			 (load-theme (nth ivy--index tokamach/themes) t)
 			 (fringe-mode 0)))))
 #+END_SRC
 
     Of course at startup we still want an actual theme to be loaded.
 
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'parchment)
+  (load-theme 'parchment t)
 #+END_SRC
 
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
@@ -128,6 +155,7 @@ This is my init.el, except its written in org mode.
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
+  (straight-use-package 'dashboard)
   (require 'dashboard)
 
   (let ((imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
@@ -159,9 +187,11 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq ispell-program-name "/usr/local/bin/ispell")
 
   ;; smooth scroll
+  (straight-use-package 'smooth-scrolling)
   (require 'smooth-scrolling)
   (smooth-scrolling-mode 1)
 
+  (straight-use-package 'undo-tree)
   (global-undo-tree-mode)
 
   ;; stop backups
@@ -174,8 +204,12 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy and setting up the ivy/counsel/swiper trinity.
 
 #+BEGIN_SRC emacs-lisp
+  (straight-use-package 'hydra)
   ;; modal-soul, my hydras
+  (straight-use-package 'buffer-move)
   (load "~/.emacs.d/lisp/modal-soul.el")
+
+  (straight-use-package 'which-key)
   (which-key-mode)
 
   ;; avy bindings
@@ -186,10 +220,22 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     Ivy is a minibuffer completion framework, much nicer than the built in emacs completion. 
 #+BEGIN_SRC emacs-lisp
   ;; ivy/counsel/swiper
+  (straight-use-package 'counsel)
   (global-set-key "\C-s" 'swiper)
   (counsel-mode)
   (setq projectile-completion-system 'ivy)
 #+END_SRC
+
+*** Magit
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'magit)
+#+END_SRC
+
+*** Projectile
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'projectile)
+#+END_SRC
+
 
 ** Language Config
    Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
@@ -262,6 +308,10 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     The language of the gods finally gets its turn. Do I want intelligent context dependent structural editing? *YES*. Do I want rainbows all over my parentheses? *YES*. Gimme that good shit.
 
 #+BEGIN_SRC emacs-lisp
+  (straight-use-package 'geiser)
+  (straight-use-package 'lispy)
+  (straight-use-package 'rainbow-delimiters)
+
   (defun tokamach/lisp-hook ()
     "Personal Lisp hook."
     (lispy-mode)
@@ -275,6 +325,8 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (add-hook 'lisp-mode-hook        #'tokamach/lisp-hook)
 
   ;; Common Lisp
+  (straight-use-package 'slime)
+  (straight-use-package 'slime-company)
   (require 'slime)
   (setq inferior-lisp-program "/usr/local/bin/sbcl")
   (slime-setup '(slime-fancy slime-company))
@@ -283,6 +335,10 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 *** Latex
     This is really just wrestling with macOS. AuCTeX is really good out of the box.
 #+BEGIN_SRC emacs-lisp
+(straight-use-package 'auctex)
+(straight-use-package 'latex-pretty-symbols)
+(straight-use-package 'exec-path-from-shell)
+
 (exec-path-from-shell-initialize)
 (setq TeX-parse-self t) ; Enable parse on load.
 (setq TeX-auto-save t) ; Enable parse on save.
@@ -291,6 +347,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
 
 #+BEGIN_SRC emacs-lisp
+(straight-use-package 'matlab-mode)
 (setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
 (setq matlab-shell-command-switches (list "-nodesktop"))
 #+END_SRC

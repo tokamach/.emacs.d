@@ -56,7 +56,7 @@
  '(pos-tip-foreground-color "#FFFFC8")
  '(powerline-color1 "#1E1E1E")
  '(powerline-color2 "#111111")
- '(projectile-mode t nil (projectile))
+; '(projectile-mode t nil (projectile))
  '(safe-local-variable-values
    '((c-default-style . "linux")
      (olivetti-body-width . 94)
