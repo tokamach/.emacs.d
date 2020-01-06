@@ -5,38 +5,36 @@
 
 This is my init.el, except its written in org mode. 
 
-** init.el
-   =init.el= is a short file that simply tangles, loads, and compiles the =conf.org= file (/this one/).
+* init.el
+  =init.el= is a short file that simply tangles, loads, and compiles the =conf.org= file (/this one/).
 
-* Emacs setup
-** Packages
+* Packages
    We now use a combination of use-package and straight.el to manage packages. This gives a nice functional/declarative style of package management. Way better than trying to remember what is installed on which computer, and having to constantly call =package-install-selected-packages= on every new machine.
 
    This is the bootstrap code for straight.el
 #+BEGIN_SRC emacs-lisp
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	(bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+#+END_SRC
+
+    I also want to set up =use-package=, which works in conjuntion with =straight.el=.
+
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'use-package)
 #+END_SRC
 
 *** Themes and Visual stuff
-#+BEGIN_SRC emacs-lisp
-  (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
-    (mapc #'straight-use-package theme-packages)) 
 
-    (straight-use-package 'doom-modeline)
-    (straight-use-package 'olivetti)
-    (straight-use-package 'all-the-icons)
-#+END_SRC
 
 *** Org stuff
 #+BEGIN_SRC emacs-lisp
@@ -44,7 +42,7 @@ This is my init.el, except its written in org mode.
 (straight-use-package 'org-sidebar)
 #+END_SRC
 
-** Local Files
+* Local Files
    Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
 
 #+BEGIN_SRC emacs-lisp
@@ -62,25 +60,41 @@ This is my init.el, except its written in org mode.
 (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
 #+END_SRC
 
-** Editor config
-   Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
+* Editor config
+  Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
 
 *** waifu-mode
     Ain't this a gem. It's a kind of image viewer, it picks random images from a given folder and shows them onscreen.
 #+BEGIN_SRC emacs-lisp
-(require 'waifu)
-(waifu-keybind-to-dir
- '(("m" "~/Pictures/animu/madoka_magica/madoka")
-   ("h" "~/Pictures/animu/madoka_magica/homura")
-   ("s" "~/Pictures/animu/madoka_magica/sayaka")
-   ("k" "~/Pictures/animu/madoka_magica/kyouko")
-   ("M" "~/Pictures/animu/madoka_magica/mami")
-   ("v" "~/Pictures/animu/gabriel_dropout/vigne")
-   ("f" "~/Pictures/animu/re_zero/felix")
-   ("p" "~/Pictures/animu/proggybooks")))
+  ;; (require 'waifu)
+  ;; (waifu-keybind-to-dir
+  ;;  '(("m" "~/Pictures/animu/madoka_magica/madoka")
+  ;;    ("h" "~/Pictures/animu/madoka_magica/homura")
+  ;;    ("s" "~/Pictures/animu/madoka_magica/sayaka")
+  ;;    ("k" "~/Pictures/animu/madoka_magica/kyouko")
+  ;;    ("M" "~/Pictures/animu/madoka_magica/mami")
+  ;;    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
+  ;;    ("f" "~/Pictures/animu/re_zero/felix")
+  ;;    ("p" "~/Pictures/animu/proggybooks")))
 #+END_SRC
 
 *** Themes, font, prettifying
+    First we'll install the theme packages, and load tao-theme.
+
+#+BEGIN_SRC emacs-lisp
+  (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
+    (mapc #'straight-use-package theme-packages)) 
+
+  (straight-use-package 'doom-modeline)
+  (straight-use-package 'olivetti)
+  (straight-use-package 'all-the-icons)
+
+  (use-package tao-theme
+	       :straight t
+	       :init
+	       (load-theme 'tao-yang t))
+#+END_SRC
+
     Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
 
 #+BEGIN_SRC emacs-lisp
@@ -118,7 +132,7 @@ This is my init.el, except its written in org mode.
     Of course at startup we still want an actual theme to be loaded.
 
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'parchment t)
+  ;(load-theme 'parchment t)
 #+END_SRC
 
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
@@ -155,6 +169,7 @@ This is my init.el, except its written in org mode.
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
+  (require 'org)
   (straight-use-package 'dashboard)
   (require 'dashboard)
 
@@ -177,7 +192,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 #+END_SRC
 
 *** Editor functionality
-    Most of this is pretty self-explanatory. Tramp wants to use ssh, ispell exists actually(thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
+    Most of this is pretty self-explanatory. Tramp wants to use ssh, ispell exists actually (thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
 
 #+BEGIN_SRC emacs-lisp
   ;; tramp
@@ -236,9 +251,8 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 (straight-use-package 'projectile)
 #+END_SRC
 
-
-** Language Config
-   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
+* Language Config
+  Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
 *** Org mode
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
@@ -255,33 +269,33 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 
-  (advice-add 'load-theme :after #'(lambda (&rest r)
-				     (let* ((variable-tuple '(:font "New York"))
-					    (base-font-color (face-foreground 'default nil 'default))
-					    (headline `(:inherit default :weight bold :foreground ,base-font-color)))
-				       (custom-theme-set-faces
-					'user
-					`(org-level-8 ((t (,@headline ,variable-tuple))))
-					`(org-level-7 ((t (,@headline ,variable-tuple))))
-					`(org-level-6 ((t (,@headline ,variable-tuple))))
-					`(org-level-5 ((t (,@headline ,variable-tuple))))
-					`(org-level-4 ((t (,@headline ,variable-tuple :height 1.2))))
-					`(org-level-3 ((t (,@headline ,variable-tuple :height 1.4))))
-					`(org-level-2 ((t (,@headline ,variable-tuple :height 1.6))))
-					`(org-level-1 ((t (,@headline ,variable-tuple :height 1.8))))
+  ;; (advice-add 'load-theme :after #'(lambda (&rest r)
+  ;; 				   (let* ((variable-tuple '(:font "New York"))
+  ;; 					  (base-font-color (face-foreground 'default nil 'default))
+  ;; 					  (headline `(:inherit default :weight bold :foreground ,base-font-color)))
+  ;; 				     (custom-theme-set-faces
+  ;; 				      'user
+  ;; 				      `(org-level-8 ((t (,@headline ,variable-tuple))))
+  ;; 				      `(org-level-7 ((t (,@headline ,variable-tuple))))
+  ;; 				      `(org-level-6 ((t (,@headline ,variable-tuple))))
+  ;; 				      `(org-level-5 ((t (,@headline ,variable-tuple))))
+  ;; 				      `(org-level-4 ((t (,@headline ,variable-tuple :height 1.2))))
+  ;; 				      `(org-level-3 ((t (,@headline ,variable-tuple :height 1.4))))
+  ;; 				      `(org-level-2 ((t (,@headline ,variable-tuple :height 1.6))))
+  ;; 				      `(org-level-1 ((t (,@headline ,variable-tuple :height 1.8))))
 
-					'(org-block                 ((t (:inherit fixed-pitch))))
-					'(org-code                  ((t (:inherit (shadow fixed-pitch)))))
-					'(org-document-info         ((t (:foreground "dark orange"))))
-					'(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-					'(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-					'(org-link                  ((t (:foreground "royal blue" :underline t))))
-					'(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-					'(org-property-value        ((t (:inherit fixed-pitch))) t)
-					'(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-					'(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
-					'(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-					'(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))))
+  ;; 				      '(org-block                 ((t (:inherit fixed-pitch))))
+  ;; 				      '(org-code                  ((t (:inherit (shadow fixed-pitch)))))
+  ;; 				      '(org-document-info         ((t (:foreground "dark orange"))))
+  ;; 				      '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+  ;; 				      '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+  ;; 				      '(org-link                  ((t (:foreground "royal blue" :underline t))))
+  ;; 				      '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;; 				      '(org-property-value        ((t (:inherit fixed-pitch))) t)
+  ;; 				      '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+  ;; 				      '(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
+  ;; 				      '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+  ;; 				      '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))))
 
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -334,6 +348,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
 *** Latex
     This is really just wrestling with macOS. AuCTeX is really good out of the box.
+
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'auctex)
 (straight-use-package 'latex-pretty-symbols)
