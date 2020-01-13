@@ -11,21 +11,7 @@ This is my init.el, except its written in org mode.
 * Packages
    We now use a combination of use-package and straight.el to manage packages. This gives a nice functional/declarative style of package management. Way better than trying to remember what is installed on which computer, and having to constantly call =package-install-selected-packages= on every new machine.
 
-   This is the bootstrap code for straight.el
-#+BEGIN_SRC emacs-lisp
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-	(bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-#+END_SRC
+   +This is the bootstrap code for straight.el+ Due to org autoloading reasons, we have to put the bootstrap code for straight.el into =init.el=
 
     I also want to set up =use-package=, which works in conjuntion with =straight.el=.
 
@@ -34,13 +20,6 @@ This is my init.el, except its written in org mode.
 #+END_SRC
 
 *** Themes and Visual stuff
-
-
-*** Org stuff
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'org-bullets)
-(straight-use-package 'org-sidebar)
-#+END_SRC
 
 * Local Files
    Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
@@ -54,10 +33,10 @@ This is my init.el, except its written in org mode.
    =/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file)
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
 #+END_SRC
 
 * Editor config
@@ -85,7 +64,6 @@ This is my init.el, except its written in org mode.
   (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
     (mapc #'straight-use-package theme-packages)) 
 
-  (straight-use-package 'doom-modeline)
   (straight-use-package 'olivetti)
   (straight-use-package 'all-the-icons)
 
@@ -161,6 +139,7 @@ This is my init.el, except its written in org mode.
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
+  (straight-use-package 'doom-modeline)
   (require 'doom-modeline)
   (doom-modeline-mode 1)
 #+END_SRC
@@ -169,8 +148,8 @@ This is my init.el, except its written in org mode.
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'org)
-  (straight-use-package 'dashboard)
+  (use-package dashboard
+    :straight t)
   (require 'dashboard)
 
   (let ((imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
@@ -251,16 +230,20 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 (straight-use-package 'projectile)
 #+END_SRC
 
-* Language Config
-  Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
-
 *** Org mode
+    Some nice lil packages.
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'org-bullets)
+(straight-use-package 'org-sidebar)
+#+END_SRC
+
     Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-restore-windows-after-quit 1)
-
   (setq org-hide-emphasis-markers t)
+  (setq org-directory "~/doc/org/")
+  (setq org-default-notes-file (concat org-directory "capture.org"))
 
   (custom-theme-set-faces
    'user
@@ -269,37 +252,12 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
   (add-hook 'org-mode-hook 'variable-pitch-mode)
 
-  ;; (advice-add 'load-theme :after #'(lambda (&rest r)
-  ;; 				   (let* ((variable-tuple '(:font "New York"))
-  ;; 					  (base-font-color (face-foreground 'default nil 'default))
-  ;; 					  (headline `(:inherit default :weight bold :foreground ,base-font-color)))
-  ;; 				     (custom-theme-set-faces
-  ;; 				      'user
-  ;; 				      `(org-level-8 ((t (,@headline ,variable-tuple))))
-  ;; 				      `(org-level-7 ((t (,@headline ,variable-tuple))))
-  ;; 				      `(org-level-6 ((t (,@headline ,variable-tuple))))
-  ;; 				      `(org-level-5 ((t (,@headline ,variable-tuple))))
-  ;; 				      `(org-level-4 ((t (,@headline ,variable-tuple :height 1.2))))
-  ;; 				      `(org-level-3 ((t (,@headline ,variable-tuple :height 1.4))))
-  ;; 				      `(org-level-2 ((t (,@headline ,variable-tuple :height 1.6))))
-  ;; 				      `(org-level-1 ((t (,@headline ,variable-tuple :height 1.8))))
-
-  ;; 				      '(org-block                 ((t (:inherit fixed-pitch))))
-  ;; 				      '(org-code                  ((t (:inherit (shadow fixed-pitch)))))
-  ;; 				      '(org-document-info         ((t (:foreground "dark orange"))))
-  ;; 				      '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
-  ;; 				      '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
-  ;; 				      '(org-link                  ((t (:foreground "royal blue" :underline t))))
-  ;; 				      '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-  ;; 				      '(org-property-value        ((t (:inherit fixed-pitch))) t)
-  ;; 				      '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
-  ;; 				      '(org-table                 ((t (:inherit fixed-pitch :foreground "#83a598"))))
-  ;; 				      '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
-  ;; 				      '(org-verbatim              ((t (:inherit (shadow fixed-pitch)))))))))
-
   (require 'org-bullets)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
+
+* Language Config
+  Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
 *** C/C++
     The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
