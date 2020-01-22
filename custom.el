@@ -68,7 +68,7 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(objed-cursor-color "#ff5d38")
  '(org-agenda-files
-   '("~/os-project/notes.org" "~/.emacs.d/conf.org" "/Users/tom/doc/uni/y3/366.org" "~/doc/org/personal.org" "/Users/tom/doc/uni/y3/300.org" "/Users/tom/doc/uni/y3/306.org" "/Users/tom/doc/uni/y3/311.org" "/Users/tom/doc/uni/y3/361.org"))
+   '("~/doc/uni/y3/312.org" "~/doc/uni/y3/363.org" "~/os-project/notes.org" "~/.emacs.d/conf.org" "/Users/tom/doc/uni/y3/366.org" "~/doc/org/personal.org" "/Users/tom/doc/uni/y3/300.org" "/Users/tom/doc/uni/y3/306.org" "/Users/tom/doc/uni/y3/311.org" "/Users/tom/doc/uni/y3/361.org"))
  '(org-drill-done-count-color "#663311")
  '(org-drill-failed-count-color "#880000")
  '(org-drill-mature-count-color "#005500")
