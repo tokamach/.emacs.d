@@ -59,16 +59,19 @@ This is my init.el, except its written in org mode.
     First we'll install the theme packages, and load tao-theme.
 
 #+BEGIN_SRC emacs-lisp
-  (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
-    (mapc #'straight-use-package theme-packages)) 
+  ;; (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
+  ;;   (mapc #'straight-use-package theme-packages))
 
+  (use-package doom-themes
+    :straight t
+    :init (load-theme 'doom-solarized-light t))
   (straight-use-package 'olivetti)
   (straight-use-package 'all-the-icons)
 
-  (use-package tao-theme
-	       :straight t
-	       :init
-	       (load-theme 'tao-yang t))
+  ;; (use-package tao-theme
+  ;;   :straight t
+  ;;   :init
+  ;;   (load-theme 'tao-yang t))
 #+END_SRC
 
     Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
@@ -137,9 +140,9 @@ This is my init.el, except its written in org mode.
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
-  ;(straight-use-package 'doom-modeline)
-  ;(require 'doom-modeline)
-  ;(doom-modeline-mode 1)
+  (use-package doom-modeline
+    :straight t
+    :hook (after-init . doom-modeline-mode))
 #+END_SRC
 
 *** Homepage
@@ -258,6 +261,13 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
+*** Minions
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :straight t
+    :config (minions-mode 1))
+#+END_SRC
+
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
@@ -338,8 +348,8 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (straight-use-package 'csharp-mode)
   (straight-use-package 'omnisharp)
 
-  (add-hook 'csharp-mode #'omnisharp-mode)
-  (omnisharp-install-server)  ;Will do nothing if server already installed
+  (add-hook 'csharp-mode-hook #'omnisharp-mode)
+  ;(omnisharp-install-server)  ;Will do nothing if server already installed
 
   (eval-after-load
    'company
