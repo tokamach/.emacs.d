@@ -278,7 +278,6 @@ My system uses time management features like the /agenda/, =org-capture=, some /
   (setq tokamach/org-file-list (file-expand-wildcards (concat tokamach/org-directory "*.org")))
 #+END_SRC
 
-
 We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
 
 #+BEGIN_SRC emacs-lisp
@@ -300,6 +299,11 @@ Once notes are captured to inbox.org, they must be /processed/. I will add any e
                 tokamach/org-file-list))
 #+END_SRC
 
+Sometimes I wanna use /pomodoro technique/.
+
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'org-pomodoro)
+#+END_SRC
 ** Agenda 
 The same principle applies to /agenda/. We should be able to put /TODO/ headings in any org file, for any project, and have them be added to the agenda. We can filter through these in the agenda config.
 
@@ -340,7 +344,7 @@ The org agenda page is the heart of the entire system. Assuming all the org file
                    (org-agenda-files '(,(concat tokamach/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
             ;; Projects
-            (tags-todo ":programming:car:bike:"
+            (tags-todo ":programming:car:bike:keyboard:"
                        ((org-agenda-overriding-header "Projects")))
             ;; Personal Stuff
             (tags-todo ":house:money:work:me:"
