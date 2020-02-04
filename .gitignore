@@ -16,3 +16,8 @@ abbrev_defs
 *.elc
 conf.el
 #*#
+
+straight
+recentf
+bookmarks
+transient
