@@ -1,4 +1,4 @@
-;; For annoying autoload reasons we have to do this here isntead of in conf.org
+;; For annoying autoload reasons we have to do this here instead of in conf.org
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))

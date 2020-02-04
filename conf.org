@@ -31,10 +31,10 @@ This is my init.el, except its written in org mode.
    =/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
-  (setq custom-file "~/.emacs.d/custom.el")
+  (setq custom-file (concat user-emacs-directory  "custom.el"))
   (load custom-file)
-  (add-to-list 'load-path "~/.emacs.d/lisp/")
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/colors/")
+  (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "colors/"))
 #+END_SRC
 
 * Editor config
@@ -56,22 +56,21 @@ This is my init.el, except its written in org mode.
 #+END_SRC
 
 *** Themes, font, prettifying
-    First we'll install the theme packages, and load tao-theme.
+    First we'll install the theme packages, and install doom-themes, loading fairy-floss cause its dope.
 
 #+BEGIN_SRC emacs-lisp
-  ;; (let ((theme-packages '(parchment-theme purple-haze-theme soothe-theme twilight-theme base16-theme zenburn-theme solarized-theme birds-of-paradise-plus-theme gruvbox-theme anti-zenburn-theme creamsody-theme doom-themes)))
-  ;;   (mapc #'straight-use-package theme-packages))
-
   (use-package doom-themes
     :straight t
-    :init (load-theme 'doom-solarized-light t))
+    ;; :init (load-theme 'doom-fairy-floss t)
+    )
+
   (straight-use-package 'olivetti)
   (straight-use-package 'all-the-icons)
 
-  ;; (use-package tao-theme
-  ;;   :straight t
-  ;;   :init
-  ;;   (load-theme 'tao-yang t))
+   (use-package tao-theme
+      :straight t
+      :init
+      (load-theme 'tao-yang t))
 #+END_SRC
 
     Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
@@ -98,20 +97,14 @@ This is my init.el, except its written in org mode.
      :require-match t
      ;; :initial-input (car custom-enabled-themes)
      :action (lambda (theme)
-	       (progn ;; (mapc #'disable-theme custom-enabled-themes)
-		 (dolist (i custom-enabled-themes) (disable-theme i))
+	       (progn
+		 (mapc #'disable-theme custom-enabled-themes)
 		 (load-theme (intern theme) t)
 		 (fringe-mode 0)))
      :update-fn (lambda ()
 		  (progn (mapc #'disable-theme custom-enabled-themes)
 			 (load-theme (nth ivy--index tokamach/themes) t)
 			 (fringe-mode 0)))))
-#+END_SRC
-
-    Of course at startup we still want an actual theme to be loaded.
-
-#+BEGIN_SRC emacs-lisp
-  ;(load-theme 'parchment t)
 #+END_SRC
 
     Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
@@ -121,7 +114,7 @@ This is my init.el, except its written in org mode.
   (set-frame-font "Anonymous Pro 13" nil t)
 #+END_SRC
 
-    This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. +Also =doom-modeline= makes the modeline look all nice.+
+    This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
 
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
@@ -166,6 +159,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq dashboard-items '((recents  . 5)
 			  (agenda   . 5)
 			  (projects . 5)))
+  (setq dashboard-footer nil)
 
   (dashboard-setup-startup-hook)
   (setq inital-buffer-choice (lambda () (get-buffer "*dashboard*")))
@@ -231,35 +225,6 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 (straight-use-package 'projectile)
 #+END_SRC
 
-*** Org mode
-    Some nice lil packages.
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'org-bullets)
-(straight-use-package 'org-sidebar)
-#+END_SRC
-
-    Setting things up for org-mode. Org directory where I keep all my org files. Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
-    =hide-emphasis-markers= is a nice addition that shows styled text inline. Combined with variable pitch mode it makes org buffers feel more like rich text.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/doc/org/")
-  (setq tokamach/org-file-list (file-expand-wildcards (concat org-directory "*.org")))
-  (setq org-agenda-restore-windows-after-quit 1)
-  (setq org-hide-emphasis-markers t)
-  (setq org-default-notes-file (concat org-directory "capture.org"))
-
-  (setq org-refile-targets (mapcar (lambda (e) `(,e . (:maxlevel . 2))) tokamach/org-file-list))
-
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "New York" :height 140 :weight light))))
-   '(fixed-pitch ((t (:family "Anonymous Pro" :slant normal :weight normal :height 1.0 :width normal)))))
-
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
-
-  (require 'org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SRC
 
 *** Minions
 #+BEGIN_SRC emacs-lisp
@@ -268,6 +233,133 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     :config (minions-mode 1))
 #+END_SRC
 
+*** Treemacs
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'all-the-icons)
+  (straight-use-package 'treemacs)
+#+END_SRC
+* Org mode
+As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
+** Misc Config
+First though, a few org addon packages. org-bullets replaces the default =*= with nice unicode bullets and org-sidebar provides a handy sidebar overview of files.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :straight t
+    :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  (straight-use-package 'org-sidebar)
+#+END_SRC
+
+Org agenda would annoyingly mess up your windows and then not put them back. Be more like your respectable tidy brother magit.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-restore-windows-after-quit 1)
+#+END_SRC
+
+=hide-emphasis-markers= is a nice addition that shows styled text inline. Combined with variable pitch mode it makes org buffers feel more like rich text.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-hide-emphasis-markers t)
+  ;(add-hook 'org-mode-hook 'variable-pitch-mode)
+#+END_SRC
+
+=org-indent-mode= handles indentation, or the lack thereof. Org files should be saved without indentation, and org-indent-mode will display them as if they were. Naturally its important for org-indent-mode to always be enabled, so that the lack of indentation is hidden away.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-indented t)
+#+END_SRC
+
+** Workflow
+Now we get to the good stuff. Here we'll set some useful variables for all org functions. Org directory where I keep all my org files. 
+My system uses time management features like the /agenda/, =org-capture=, some /GTD/ concepts, and a combo of /Orglzy/ and /Syncthing/ to provide a comprehensive, multiplatform, planning system.
+
+#+BEGIN_SRC emacs-lisp
+  (setq tokamach/org-directory "~/doc/org/")
+  (setq tokamach/org-file-list (file-expand-wildcards (concat tokamach/org-directory "*.org")))
+#+END_SRC
+
+
+We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+        '((sequence "TODO" "NEXT" "|" "DONE" )))
+#+END_SRC
+
+=inbox.org= serves as a place for captured ideas to go. 
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-default-notes-file (concat tokamach/org-directory "inbox.org"))
+#+END_SRC
+
+Once notes are captured to inbox.org, they must be /processed/. I will add any extra details such as deadlines, time to complete, and priority, then /refile/ them to their relevant org heading. Since all org files can be related in any weird number of ways, we shouldn't limit ourselves to only a small amount of targets. All org files (at least all in the org directory) are included, albeit only to a single heading level (for now).
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-targets
+        (mapcar (lambda (e) `(,e . (:maxlevel . 1)))
+                tokamach/org-file-list))
+#+END_SRC
+
+** Agenda 
+The same principle applies to /agenda/. We should be able to put /TODO/ headings in any org file, for any project, and have them be added to the agenda. We can filter through these in the agenda config.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files tokamach/org-file-list)
+#+END_SRC
+
+
+The org agenda page is the heart of the entire system. Assuming all the org files are in place, and the headings are processed correctly, this should be a beautiful dashboard to manage tasks from. Largely copied from [[https://gist.github.com/jethrokuan/78936a44f249e2c1a61b5184669a32d7][this gist]] (look up the rest of Jethro Kuans stuff on this though, he's got it down).
+
+#+BEGIN_SRC emacs-lisp
+  (setq tokamach/org-agenda-view
+        `(("a" "Agenda"
+           ;; Today
+           ((agenda ""
+                    ((org-agenda-span 'day)
+                     (org-agenda-overriding-header "Today")
+                     (org-deadline-warning-days 365)))
+            ;; The Week
+            (agenda ""
+                    ((org-agenda-span 'week)
+                     (org-agenda-overriding-header "This Week")
+                     (org-deadline-warning-days 365)))
+            ;; Inbox
+            (todo "TODO"
+                  ((org-agenda-overriding-header "To Refile")
+                   (org-agenda-files '(,(concat tokamach/org-directory "inbox.org")))))
+            ;; In Progress
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "In Progress")
+                   (org-agenda-files '(,(concat tokamach/org-directory "someday.org")
+                                       ,(concat tokamach/org-directory "next.org")
+                                       ;; TODO: add individual projects
+                                       ))))
+            ;; One offs (next.org)
+            (todo "TODO"
+                  ((org-agenda-overriding-header "One-off Tasks")
+                   (org-agenda-files '(,(concat tokamach/org-directory "next.org")))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+            ;; Projects
+            (tags-todo ":programming:car:bike:"
+                       ((org-agenda-overriding-header "Projects")))
+            ;; Personal Stuff
+            (tags-todo ":house:money:work:me:"
+                       ((org-agenda-overriding-header "Me")))
+            nil))))
+
+  (setq org-agenda-custom-commands `,tokamach/org-agenda-view)
+  (global-set-key (kbd "C-c a") #'org-agenda)
+#+END_SRC
+
+Capturing is key to the process. Ideas can come about anywhere, anytime. Being able to quickly jot your idea down for later processing means you don't have to worry about sacrificing your current task or your forgetting your idea.
+Right now there's only one capture template, /i/, which adds the idea to the inbox file with /TODO/ prefixed.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+        `(("i" "inbox" entry (file ,(concat tokamach/org-directory "inbox.org")) "* TODO %?")))
+
+  (global-set-key (kbd "C-c c") #'org-capture)
+#+END_SRC
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
@@ -356,4 +448,13 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
    '(add-to-list 'company-backends 'company-omnisharp))
 
   (add-hook 'csharp-mode-hook #'company-mode)
+#+END_SRC
+*** Swift/Xcode
+    Currently non working, not tangled
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package lsp-sourcekit
+    :after lsp-mode
+    :config
+    (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/")
+    (setq lsp-sourcekit-executable (expand-file-name "/L")))
 #+END_SRC
