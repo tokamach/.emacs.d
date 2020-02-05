@@ -275,7 +275,9 @@ My system uses time management features like the /agenda/, =org-capture=, some /
 
 #+BEGIN_SRC emacs-lisp
   (setq tokamach/org-directory "~/doc/org/")
-  (setq tokamach/org-file-list (file-expand-wildcards (concat tokamach/org-directory "*.org")))
+  (setq tokamach/org-file-list 
+        `(,@(file-expand-wildcards (concat tokamach/org-directory "*.org"))
+          "~/os-project/notes.org"))
 #+END_SRC
 
 We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
@@ -295,8 +297,9 @@ Once notes are captured to inbox.org, they must be /processed/. I will add any e
 
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets
-        (mapcar (lambda (e) `(,e . (:maxlevel . 1)))
+        (mapcar (lambda (e) `(,e . (:maxlevel . 2)))
                 tokamach/org-file-list))
+  (setq org-refile-use-outline-path 'file)
 #+END_SRC
 
 Sometimes I wanna use /pomodoro technique/.
@@ -311,17 +314,16 @@ The same principle applies to /agenda/. We should be able to put /TODO/ headings
   (setq org-agenda-files tokamach/org-file-list)
 #+END_SRC
 
-
 The org agenda page is the heart of the entire system. Assuming all the org files are in place, and the headings are processed correctly, this should be a beautiful dashboard to manage tasks from. Largely copied from [[https://gist.github.com/jethrokuan/78936a44f249e2c1a61b5184669a32d7][this gist]] (look up the rest of Jethro Kuans stuff on this though, he's got it down).
 
 #+BEGIN_SRC emacs-lisp
   (setq tokamach/org-agenda-view
         `(("a" "Agenda"
            ;; Today
-           ((agenda ""
-                    ((org-agenda-span 'day)
-                     (org-agenda-overriding-header "Today")
-                     (org-deadline-warning-days 365)))
+           (;; (agenda ""
+            ;;         ((org-agenda-span 'day)
+            ;;          (org-agenda-overriding-header "Today")
+            ;;          (org-deadline-warning-days 365)))
             ;; The Week
             (agenda ""
                     ((org-agenda-span 'week)
@@ -336,6 +338,7 @@ The org agenda page is the heart of the entire system. Assuming all the org file
                   ((org-agenda-overriding-header "In Progress")
                    (org-agenda-files '(,(concat tokamach/org-directory "someday.org")
                                        ,(concat tokamach/org-directory "next.org")
+                                       ,(concat tokamach/org-directory "cw.org")
                                        ;; TODO: add individual projects
                                        ))))
             ;; One offs (next.org)
@@ -343,6 +346,8 @@ The org agenda page is the heart of the entire system. Assuming all the org file
                   ((org-agenda-overriding-header "One-off Tasks")
                    (org-agenda-files '(,(concat tokamach/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+            (tags-todo ":uni:os:"
+                       ((org-agenda-overriding-header "Uni Work")))
             ;; Projects
             (tags-todo ":programming:car:bike:keyboard:"
                        ((org-agenda-overriding-header "Projects")))
@@ -353,6 +358,12 @@ The org agenda page is the heart of the entire system. Assuming all the org file
 
   (setq org-agenda-custom-commands `,tokamach/org-agenda-view)
   (global-set-key (kbd "C-c a") #'org-agenda)
+#+END_SRC
+
+We'll also do some minor theming to tidy it up.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-block-separator ?-)
 #+END_SRC
 
 Capturing is key to the process. Ideas can come about anywhere, anytime. Being able to quickly jot your idea down for later processing means you don't have to worry about sacrificing your current task or your forgetting your idea.
