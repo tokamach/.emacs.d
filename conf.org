@@ -3,10 +3,7 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
-This is my init.el, except its written in org mode. 
-
-* init.el
-  =init.el= is a short file that simply tangles, loads, and compiles the =conf.org= file (/this one/). For annoying autoload related reasons it also has the =straight.el= bootstrap code in it.
+This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled to =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file.
 
 * Packages
    We now use a combination of use-package and straight.el to manage packages. This gives a nice functional/declarative style of package management. Way better than trying to remember what is installed on which computer, and having to constantly call =package-install-selected-packages= on every new machine.
@@ -64,17 +61,25 @@ This is my init.el, except its written in org mode.
     ;; :init (load-theme 'doom-fairy-floss t)
     )
 
-  (straight-use-package 'olivetti)
+  (use-package olivetti
+    :straight t
+    :bind (("<left-margin> <mouse-1>" . olivetti-expand)
+           ("<right-margin> <mouse-1>" . olivetti-shrink)))
+
   (straight-use-package 'all-the-icons)
 
-   (use-package tao-theme
-      :straight t
-      :init
-      (load-theme 'tao-yang t))
+  (use-package tao-theme
+    :straight t
+    ;; :init (load-theme 'tao-yang t)
+    )
+
+  (use-package gruvbox-theme
+    :straight t
+    :init (load-theme 'gruvbox-light-medium t))
 #+END_SRC
 
     Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
-
+    
 #+BEGIN_SRC emacs-lisp
   (defvar tokamach/themes '(
 			    ;; Dark Themes
@@ -100,7 +105,7 @@ This is my init.el, except its written in org mode.
 	       (progn
 		 (mapc #'disable-theme custom-enabled-themes)
 		 (load-theme (intern theme) t)
-		 (fringe-mode 0)))
+		 (fringe-mode 'minimal)))
      :update-fn (lambda ()
 		  (progn (mapc #'disable-theme custom-enabled-themes)
 			 (load-theme (nth ivy--index tokamach/themes) t)
@@ -111,7 +116,8 @@ This is my init.el, except its written in org mode.
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
-  (set-frame-font "Anonymous Pro 13" nil t)
+  ;(set-frame-font "Anonymous Pro 13" nil t)
+  (set-frame-font "Iosevka Slab 13" nil t)
 #+END_SRC
 
     This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
@@ -123,19 +129,18 @@ This is my init.el, except its written in org mode.
   (setq initial-scratch-message "")
   (setq inhibit-startup-message t)
   (tool-bar-mode 0)
-  (menu-bar-mode 0)
+  (menu-bar-mode 1)
   (scroll-bar-mode 0)
-  (fringe-mode 0)
+  (fringe-mode '(1 . 1))
   (setq frame-title-format "%b")
 
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  ;(add-to-list 'default-frame-alist '(ns-appearance . dark))
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
   (use-package doom-modeline
     :straight t
-    :hook (after-init . doom-modeline-mode))
+    :hook (emacs-startup . doom-modeline-mode))
 #+END_SRC
 
 *** Homepage
@@ -205,7 +210,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   ;; (global-set-key (kbd "C-l") 'avy-goto-line)
 #+END_SRC
 
-*** Ivy
+*** M-x completion
     Ivy is a minibuffer completion framework, much nicer than the built in emacs completion. 
 #+BEGIN_SRC emacs-lisp
   ;; ivy/counsel/swiper
@@ -214,6 +219,13 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (counsel-mode)
   (setq projectile-completion-system 'ivy)
 #+END_SRC
+
+We'll also use smex to provide history for M-x
+
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'smex)
+#+END_SRC
+
 
 *** Magit
 #+BEGIN_SRC emacs-lisp
@@ -254,6 +266,7 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-restore-windows-after-quit 1)
+  (setq org-src-window-setup 'current-window)
 #+END_SRC
 
 =hide-emphasis-markers= is a nice addition that shows styled text inline. Combined with variable pitch mode it makes org buffers feel more like rich text.
@@ -268,6 +281,14 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
 #+END_SRC
+
+=org-fragtog= nicely switches between latex preview and latex code when your cursor is over a snippet.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-fragtog
+    :straight (:host github :repo "io12/org-fragtog")
+    :init (add-hook 'org-mode-hook 'org-fragtog-mode))
+#+END_SRC 
 
 ** Workflow
 Now we get to the good stuff. Here we'll set some useful variables for all org functions. Org directory where I keep all my org files. 
@@ -328,29 +349,32 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             (agenda ""
                     ((org-agenda-span 'week)
                      (org-agenda-overriding-header "This Week")
-                     (org-deadline-warning-days 365)))
+                     (org-deadline-warning-days 30)))
             ;; Inbox
             (todo "TODO"
                   ((org-agenda-overriding-header "To Refile")
-                   (org-agenda-files '(,(concat tokamach/org-directory "inbox.org")))))
+                   (org-agenda-files `(,(concat tokamach/org-directory "inbox.org")))))
             ;; In Progress
             (todo "NEXT"
                   ((org-agenda-overriding-header "In Progress")
-                   (org-agenda-files '(,(concat tokamach/org-directory "someday.org")
+                   (org-agenda-files `(,(concat tokamach/org-directory "someday.org")
                                        ,(concat tokamach/org-directory "next.org")
                                        ,(concat tokamach/org-directory "cw.org")
-                                       ;; TODO: add individual projects
-                                       ))))
+                                       ,(concat tokamach/org-directory "projects.org")))))
             ;; One offs (next.org)
             (todo "TODO"
                   ((org-agenda-overriding-header "One-off Tasks")
-                   (org-agenda-files '(,(concat tokamach/org-directory "next.org")))
+                   (org-agenda-files `(,(concat tokamach/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-            (tags-todo ":uni:os:"
-                       ((org-agenda-overriding-header "Uni Work")))
+            ;; Uni work
+            (tags-todo "uni"
+                       ((org-agenda-overriding-header "Uni Work")
+                        (org-agenda-files `(,(concat tokamach/org-directory "next.org")
+                                            ,(concat tokamach/org-directory "cw.org")))))
             ;; Projects
-            (tags-todo ":programming:car:bike:keyboard:"
-                       ((org-agenda-overriding-header "Projects")))
+            (tags-todo "programming"
+                       ((org-agenda-overriding-header "Projects")
+                        (org-agenda-files `(,(concat tokamach/org-directory "projects.org")))))
             ;; Personal Stuff
             (tags-todo ":house:money:work:me:"
                        ((org-agenda-overriding-header "Me")))
@@ -358,6 +382,12 @@ The org agenda page is the heart of the entire system. Assuming all the org file
 
   (setq org-agenda-custom-commands `,tokamach/org-agenda-view)
   (global-set-key (kbd "C-c a") #'org-agenda)
+#+END_SRC
+
+It's also important to handle idle time. I sometimes forget I'm clocked in, or something high priority comes up and I forget to clock out. Setting an idle time variable will tell org to prompt you after n minutes have passed without any input, asking what to do with the time spent doing 'nothing'. ~Of course some tasks aren't doable in emacs,~ glorious macOS will measure any activity on the system. Still doesn't apply for offline tasks. That could be time spent working offline, and you can just tell org to add it to the clock all the same.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-clock-idle-timer 15)
 #+END_SRC
 
 We'll also do some minor theming to tidy it up.
@@ -375,6 +405,50 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 
   (global-set-key (kbd "C-c c") #'org-capture)
 #+END_SRC
+** Note Taking
+=org-download= is great for taking notes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-download
+    :straight t
+    :custom
+    (org-download-screenshot-method "screencapture -i %s"))
+#+END_SRC
+
+=org-brain= dropped in favour of =org-roam=
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package org-brain
+    :straight t
+    :init
+    (setq org-brain-path (concat tokamach/org-directory "brain/"))
+    :config
+    (setq org-id-track-globally t)
+    (setq org-id-locations-file (concat user-emacs-directory ".org-id-locations"))
+    (push '("b" "Brain" plain (function org-brain-goto-end)
+            "* %i%?" :empty-lines 1)
+          org-capture-templates)
+    (setq org-brain-visualize-default-choices 'all)
+    (setq org-brain-title-max-length 12)
+    (setq org-brain-include-file-entries nil
+          org-brain-file-entries-use-title nil))
+#+END_SRC
+
+=org-roam=
+#+BEGIN_SRC emacs-lisp
+  (use-package org-roam
+        :after org
+        :hook (org-mode . org-roam-mode)
+        :straight (:host github :repo "jethrokuan/org-roam")
+        :custom
+        (org-roam-directory tokamach/org-directory)
+        :bind
+        ("C-c n l" . org-roam)      
+        ("C-c n t" . org-roam-today)
+        ("C-c n f" . org-roam-find-file)
+        ("C-c n i" . org-roam-insert)
+        ("C-c n g" . org-roam-show-graph))
+#+END_SRC
+
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
@@ -430,7 +504,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 #+END_SRC
 
 *** Latex
-    This is really just wrestling with macOS. AuCTeX is really good out of the box.
+This is really just wrestling with macOS. AuCTeX is really good out of the box.
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'auctex)
@@ -440,6 +514,12 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 (exec-path-from-shell-initialize)
 (setq TeX-parse-self t) ; Enable parse on load.
 (setq TeX-auto-save t) ; Enable parse on save.
+#+END_SRC
+
+I guess I write academic stuff. As such we need the ultimate academic tool.
+
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'academic-phrases)
 #+END_SRC
 *** Matlab
     Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
