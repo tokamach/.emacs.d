@@ -67,7 +67,7 @@
    '("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))
  '(objed-cursor-color "#ff5d38")
  '(org-agenda-files
-   '("~/doc/org/cw.org" "~/doc/org/inbox.org" "~/doc/org/next.org" "~/doc/org/personal.org" "~/doc/org/projects.org" "~/doc/org/someday.org" "~/os-project/notes.org"))
+   '("~/doc/org/clocktables.org" "~/doc/org/cw.org" "~/doc/org/inbox.org" "~/doc/org/next.org" "~/doc/org/personal.org" "~/doc/org/projects.org" "~/doc/org/someday.org" "~/os-project/notes.org"))
  '(org-download-screenshot-method "screencapture -i %s")
  '(org-drill-done-count-color "#663311")
  '(org-drill-failed-count-color "#880000")

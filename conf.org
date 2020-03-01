@@ -112,11 +112,10 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 			 (fringe-mode 0)))))
 #+END_SRC
 
-    Setting the font is pretty self explanatory. I've used Anonymous Pro for ages, it's pretty good at distinguishing 0/o, i/L, etc.
+    Setting the font is pretty self explanatory. Iosevka is a nice tall font, has good programming stuff like distinguishing 0 and O, and has ligature support (although emacs is still a lil behind on automatic ligature support.)
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
-  ;(set-frame-font "Anonymous Pro 13" nil t)
   (set-frame-font "Iosevka Slab 13" nil t)
 #+END_SRC
 
@@ -365,7 +364,8 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             (todo "TODO"
                   ((org-agenda-overriding-header "One-off Tasks")
                    (org-agenda-files `(,(concat tokamach/org-directory "next.org")))
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
+                   (org-agenda-skip-if )))
             ;; Uni work
             (tags-todo "uni"
                        ((org-agenda-overriding-header "Uni Work")
@@ -376,7 +376,7 @@ The org agenda page is the heart of the entire system. Assuming all the org file
                        ((org-agenda-overriding-header "Projects")
                         (org-agenda-files `(,(concat tokamach/org-directory "projects.org")))))
             ;; Personal Stuff
-            (tags-todo ":house:money:work:me:"
+            (tags-todo ":house:money:work:me:watch"
                        ((org-agenda-overriding-header "Me")))
             nil))))
 
