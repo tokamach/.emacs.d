@@ -139,6 +139,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
   ;; better modeline
   (use-package doom-modeline
     :straight t
+    :init (setq doom-modeline-height 15)
     :hook (emacs-startup . doom-modeline-mode))
 #+END_SRC
 
@@ -169,13 +170,49 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq inital-buffer-choice (lambda () (get-buffer "*dashboard*")))
 #+END_SRC
 
-*** Editor functionality
-    Most of this is pretty self-explanatory. Tramp wants to use ssh, ispell exists actually (thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
+
+*** Tramp
+
+Clearly we'll want to use ssh as default.
 
 #+BEGIN_SRC emacs-lisp
   ;; tramp
   (setq tramp-default-method "ssh")
+#+END_SRC
 
+This lets us connect to locally running docker containers. See [[https://willschenk.com/articles/2020/tramp_tricks/][here]].
+
+#+BEGIN_SRC emacs-lisp
+  ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
+(straight-use-package 'tramp)
+
+  (push
+   (cons
+    "docker"
+    '((tramp-login-program "docker")
+      (tramp-login-args (("exec" "-it") ("%h") ("/bin/bash")))
+      (tramp-remote-shell "/bin/sh")
+      (tramp-remote-shell-args ("-i") ("-c"))))
+   tramp-methods)
+
+  (defadvice tramp-completion-handle-file-name-all-completions
+    (around dotemacs-completion-docker activate)
+    "(tramp-completion-handle-file-name-all-completions \"\" \"/docker:\" returns
+      a list of active Docker container names, followed by colons."
+    (if (equal (ad-get-arg 1) "/docker:")
+        (let* ((dockernames-raw (shell-command-to-string "docker ps | awk '$NF != \"NAMES\" { print $NF \":\" }'"))
+               (dockernames (cl-remove-if-not
+                             #'(lambda (dockerline) (string-match ":$" dockerline))
+                             (split-string dockernames-raw "\n"))))
+          (setq ad-return-value dockernames))
+      ad-do-it))
+#+END_SRC
+
+*** Editor functionality
+
+Most of this is pretty self-explanatory. ispell exists actually (thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
+
+#+BEGIN_SRC emacs-lisp
   ;; flyspell
   (setq ispell-program-name "/usr/local/bin/ispell")
 
@@ -194,7 +231,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 #+END_SRC
 
 *** Editor key bindings
-    Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy and setting up the ivy/counsel/swiper trinity.
+Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy and setting up the ivy/counsel/swiper trinity.
 
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'hydra)
@@ -204,9 +241,13 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
   (straight-use-package 'which-key)
   (which-key-mode)
+#+END_SRC
 
-  ;; avy bindings
-  ;; (global-set-key (kbd "C-l") 'avy-goto-line)
+Expand region is great.
+
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :bind (("C-." . er/expand-region)))
 #+END_SRC
 
 *** M-x completion
@@ -215,6 +256,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   ;; ivy/counsel/swiper
   (straight-use-package 'counsel)
   (global-set-key "\C-s" 'swiper)
+  (setq swiper-use-visual-line-p #'ignore)
   (counsel-mode)
   (setq projectile-completion-system 'ivy)
 #+END_SRC
@@ -364,17 +406,16 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             (todo "TODO"
                   ((org-agenda-overriding-header "One-off Tasks")
                    (org-agenda-files `(,(concat tokamach/org-directory "next.org")))
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
-                   (org-agenda-skip-if )))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
             ;; Uni work
             (tags-todo "uni"
                        ((org-agenda-overriding-header "Uni Work")
                         (org-agenda-files `(,(concat tokamach/org-directory "next.org")
                                             ,(concat tokamach/org-directory "cw.org")))))
-            ;; Projects
-            (tags-todo "programming"
-                       ((org-agenda-overriding-header "Projects")
-                        (org-agenda-files `(,(concat tokamach/org-directory "projects.org")))))
+            ;; Media
+            (todo "TODO"
+                       ((org-agenda-overriding-header "Read/Watch/Listen")
+                        (org-agenda-files `(,(concat tokamach/org-directory "media.org")))))
             ;; Personal Stuff
             (tags-todo ":house:money:work:me:watch"
                        ((org-agenda-overriding-header "Me")))
@@ -449,6 +490,12 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
         ("C-c n g" . org-roam-show-graph))
 #+END_SRC
 
+** Habits
+Org has a nice way of tracking em.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-modules 'habits)
+#+END_SRC
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
