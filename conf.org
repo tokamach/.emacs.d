@@ -507,30 +507,56 @@ Org has a nice way of tracking em.
 Org mode can also be used as a blog creation platform. I can write and keep blog posts locally, and then publish them to a webserver in HTML format.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-static-blog
-    :straight t
-    :config
-    (setq org-static-blog-publish-title "comf.moe blog")
-    (setq org-static-blog-publish-url "https://comf.moe/blog/")
-    (setq org-static-blog-enable-tags t)
-    (setq org-static-blog-publish-directory "~/doc/org/journal/publish/")
-    (setq org-static-blog-posts-directory "~/doc/org/journal/publish/posts/")
-    (setq org-static-blog-drafts-directory "~/doc/org/journal/publish/drafts/"))
+      (use-package org-static-blog
+        :straight t
+        :config
+        (setq org-static-blog-publish-title "comf.moe blog")
+        (setq org-static-blog-publish-url "https://comf.moe/blog/")
+        (setq org-static-blog-enable-tags t)
+        (setq org-static-blog-publish-directory "/ssh:tom@comf.moe:/var/www/comf.moe/blog/")
+        (setq org-static-blog-posts-directory "~/doc/org/journal/")
+        (setq org-static-blog-drafts-directory "~/doc/org/journal/drafts/")
+        (setq org-static-blog-enable-tags nil)
+        (setq org-export-with-toc nil)
+        (setq org-export-with-section-numbers nil)
+        ;; (setq org-static-blog-use-preview t)
+)
 #+END_SRC
 
-We'll have to set a long and annoying preamble:
+We'll have to set a long and annoying header:
 
 #+BEGIN_SRC emacs-lisp
-
+  (setq org-static-blog-page-header
+        "<meta charset=\"UTF-8\">
+        <link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon.png\">
+        <link rel=\"stylesheet\" type=\"text/css\" href=\"/index.css\">
+        <title>comf: example</title>
+        <script defer type=\"text/javascript\" src=\"/common.js\"></script>")
 #+END_SRC
 
-and postamble:
+preamble:
 
 #+BEGIN_SRC emacs-lisp
-
+  (setq org-static-blog-page-preamble
+        "<div class=\"column\" id=\"links\">
+         <ul>
+          <li><a href=\"/index.html\">home</a></li>
+          <li><a href=\"/cute.html\">cute</a></li>
+          <li><a href=\"/blog/index.html\">blog</a></li>
+          <li>about</li>
+          <li>homepages:</li>
+           <ul>
+            <li><a href=\"newtab/homepage1.html\">homepage 1</a></li>
+            <li><a href=\"newtab/homepage2.html\">homepage 2</a></li>
+            <li><a href=\"newtab/homepage3.html\">homepage 3</a></li>
+            <li><a href=\"newtab/homepage4.html\">homepage 4</a></li>
+          </ul>
+         </ul>
+         </div>")
 #+END_SRC
 
-To get the posts to fit into the template properly. 
+To get the posts to fit into the template properly.
+
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
