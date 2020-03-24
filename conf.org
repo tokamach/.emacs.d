@@ -37,7 +37,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 * Editor config
   Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
 
-*** waifu-mode
+** waifu-mode
     Ain't this a gem. It's a kind of image viewer, it picks random images from a given folder and shows them onscreen.
 #+BEGIN_SRC emacs-lisp
   ;; (require 'waifu)
@@ -52,7 +52,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
   ;;    ("p" "~/Pictures/animu/proggybooks")))
 #+END_SRC
 
-*** Themes, font, prettifying
+** Themes, font, prettifying
     First we'll install the theme packages, and install doom-themes, loading fairy-floss cause its dope.
 
 #+BEGIN_SRC emacs-lisp
@@ -75,7 +75,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 
   (use-package gruvbox-theme
     :straight t
-    :init (load-theme 'gruvbox-light-medium t))
+    :init (load-theme 'gruvbox-light-soft t))
 #+END_SRC
 
     Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
@@ -143,7 +143,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
     :hook (emacs-startup . doom-modeline-mode))
 #+END_SRC
 
-*** Homepage
+** Homepage
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
@@ -171,7 +171,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 #+END_SRC
 
 
-*** Tramp
+** Tramp
 
 Clearly we'll want to use ssh as default.
 
@@ -182,18 +182,16 @@ Clearly we'll want to use ssh as default.
 
 This lets us connect to locally running docker containers. See [[https://willschenk.com/articles/2020/tramp_tricks/][here]].
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
 (straight-use-package 'tramp)
-
-  (push
+(add-to-list 'tramp-methods
    (cons
     "docker"
     '((tramp-login-program "docker")
       (tramp-login-args (("exec" "-it") ("%h") ("/bin/bash")))
       (tramp-remote-shell "/bin/sh")
-      (tramp-remote-shell-args ("-i") ("-c"))))
-   tramp-methods)
+      (tramp-remote-shell-args ("-i") ("-c")))))
 
   (defadvice tramp-completion-handle-file-name-all-completions
     (around dotemacs-completion-docker activate)
@@ -208,7 +206,7 @@ This lets us connect to locally running docker containers. See [[https://willsch
       ad-do-it))
 #+END_SRC
 
-*** Editor functionality
+** Editor functionality
 
 Most of this is pretty self-explanatory. ispell exists actually (thanks macOS for being macOS), smooth scrolling is nice, undo-tree everywhere, oh and please stop spewing backup files all over my file system.
 
@@ -230,8 +228,8 @@ Most of this is pretty self-explanatory. ispell exists actually (thanks macOS fo
 	auto-save-default nil)
 #+END_SRC
 
-*** Editor key bindings
-Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy and setting up the ivy/counsel/swiper trinity.
+** Editor key bindings
+Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy.
 
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'hydra)
@@ -247,46 +245,55 @@ Expand region is great.
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
+  :straight t
   :bind (("C-." . er/expand-region)))
 #+END_SRC
 
-*** M-x completion
-    Ivy is a minibuffer completion framework, much nicer than the built in emacs completion. 
-#+BEGIN_SRC emacs-lisp
-  ;; ivy/counsel/swiper
-  (straight-use-package 'counsel)
-  (global-set-key "\C-s" 'swiper)
-  (setq swiper-use-visual-line-p #'ignore)
-  (counsel-mode)
-  (setq projectile-completion-system 'ivy)
-#+END_SRC
-
-We'll also use smex to provide history for M-x
+** Command Completion and Search
+I use selectrum mode now, it's just way smaller to do the same job as ivy did.
 
 #+BEGIN_SRC emacs-lisp
-(straight-use-package 'smex)
+  (straight-use-package
+   '(selectrum :host github :repo "raxod502/selectrum"))
+  (selectrum-mode +1)
+
+  (straight-use-package
+   '(selectrum-prescient :host github :repo "raxod502/prescient.el"
+                         :files ("selectrum-prescient.el")))
+  ;; to make sorting and filtering more intelligent
+  (selectrum-prescient-mode +1)
+  ;; to save your command history on disk, so the sorting gets more
+  ;; intelligent over time
+  (prescient-persist-mode +1)
 #+END_SRC
 
+Additionally, we can use CTRLF mode (alpha) to replace isearch.
 
-*** Magit
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package
+   '(ctrlf :host github :repo "raxod502/ctrlf"))
+  (ctrlf-mode +1)
+#+END_SRC
+
+** Magit
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'magit)
 #+END_SRC
 
-*** Projectile
+** Projectile
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'projectile)
 #+END_SRC
 
 
-*** Minions
+** Minions
 #+BEGIN_SRC emacs-lisp
   (use-package minions
     :straight t
     :config (minions-mode 1))
 #+END_SRC
 
-*** Treemacs
+** Treemacs
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'all-the-icons)
   (straight-use-package 'treemacs)
@@ -338,8 +345,7 @@ My system uses time management features like the /agenda/, =org-capture=, some /
 #+BEGIN_SRC emacs-lisp
   (setq tokamach/org-directory "~/doc/org/")
   (setq tokamach/org-file-list 
-        `(,@(file-expand-wildcards (concat tokamach/org-directory "*.org"))
-          "~/os-project/notes.org"))
+        `(,@(file-expand-wildcards (concat tokamach/org-directory "*.org"))))
 #+END_SRC
 
 We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
@@ -496,16 +502,45 @@ Org has a nice way of tracking em.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-modules 'habits)
 #+END_SRC
+
+** Blog
+Org mode can also be used as a blog creation platform. I can write and keep blog posts locally, and then publish them to a webserver in HTML format.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-static-blog
+    :straight t
+    :config
+    (setq org-static-blog-publish-title "comf.moe blog")
+    (setq org-static-blog-publish-url "https://comf.moe/blog/")
+    (setq org-static-blog-enable-tags t)
+    (setq org-static-blog-publish-directory "~/doc/org/journal/publish/")
+    (setq org-static-blog-posts-directory "~/doc/org/journal/publish/posts/")
+    (setq org-static-blog-drafts-directory "~/doc/org/journal/publish/drafts/"))
+#+END_SRC
+
+We'll have to set a long and annoying preamble:
+
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
+and postamble:
+
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
+To get the posts to fit into the template properly. 
 * Language Config
   Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
-*** Company Mode
+** Company Mode
     Most of these languages provide a company mode completion system. We'll just make sure the latest version is installed here so we don't have to worry about it somwhere else.
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'company)
 #+END_SRC
 
-*** C/C++
+** C/C++
     The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
     The mode hook is to set up eglot, but since that's proved very difficult in OS dev stuff, and my main C programming is for OS dev, I just disabled it until I can be bothered.
 #+BEGIN_SRC emacs-lisp
@@ -522,7 +557,7 @@ Org has a nice way of tracking em.
   ;(add-hook 'c-mode-hook 'tokamach/c-c++-hook)
 #+END_SRC
 
-*** Lisps
+** Lisps
     The language of the gods finally gets its turn. Do I want intelligent context dependent structural editing? *YES*. Do I want rainbows all over my parentheses? *YES*. Gimme that good shit.
 
 #+BEGIN_SRC emacs-lisp
@@ -550,7 +585,7 @@ Org has a nice way of tracking em.
   (slime-setup '(slime-fancy slime-company))
 #+END_SRC
 
-*** Latex
+** Latex
 This is really just wrestling with macOS. AuCTeX is really good out of the box.
 
 #+BEGIN_SRC emacs-lisp
@@ -568,7 +603,7 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'academic-phrases)
 #+END_SRC
-*** Matlab
+** Matlab
     Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
 
 #+BEGIN_SRC emacs-lisp
@@ -576,7 +611,7 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 (setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
 (setq matlab-shell-command-switches (list "-nodesktop"))
 #+END_SRC
-*** C#
+** C#
     We use csharp-mode for general syntax highlighting, and omnisharp for more advanced tooling.
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'csharp-mode)
@@ -591,7 +626,7 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 
   (add-hook 'csharp-mode-hook #'company-mode)
 #+END_SRC
-*** Swift/Xcode
+** Swift/Xcode
     Currently non working, not tangled
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package lsp-sourcekit
