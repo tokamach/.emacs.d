@@ -17,15 +17,15 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 #+END_SRC
 
 * Local Files
-   Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
+Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
 
 #+BEGIN_SRC emacs-lisp
   (setq default-directory (concat (getenv "HOME") "/"))
 #+END_SRC
 
-   The =custom-file= must be set so as not to pollute our init.el with =custom-set-definitions=.
-   In the =/lisp= directory I keep any standalone lisp files, such as major and minor modes I wrote.
-   =/colors= has any custom color schemes I've picked up that don't exist in melpa.
+The =custom-file= must be set so as not to pollute our init.el with =custom-set-definitions=.
+In the =/lisp= directory I keep any standalone lisp files, such as major and minor modes I wrote.
+=/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
   (setq custom-file (concat user-emacs-directory  "custom.el"))
@@ -301,11 +301,13 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
 * Org mode
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
 ** Misc Config
-First though, a few org addon packages. org-bullets replaces the default =*= with nice unicode bullets and org-sidebar provides a handy sidebar overview of files.
+First though, a few org addon packages. org-superstar replaces the default =*= with nice unicode bullets and org-sidebar provides a handy sidebar overview of files.
 #+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
+  (use-package org-superstar
     :straight t
-    :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    :config
+    (org-superstar-configure-like-org-bullets)
+    (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
 
   (straight-use-package 'org-sidebar)
 #+END_SRC
@@ -337,6 +339,49 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
     :straight (:host github :repo "io12/org-fragtog")
     :init (add-hook 'org-mode-hook 'org-fragtog-mode))
 #+END_SRC 
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-inlinetask)
+#+END_SRC
+
+** Table
+Org table auto align, from =/u/ndamee= on reddit:
+#+BEGIN_SRC emacs-lisp
+  (require 'subr-x)
+
+  (setq org-table-auto-align-in-progress nil)
+
+  (defun org-table-auto-align (begin end length)
+    (save-match-data
+      (unless (or org-table-auto-align-in-progress
+                  (not (org-at-table-p))
+                  (and (eq this-command 'org-self-insert-command)
+                       (member (this-command-keys) '(" " "+" "|" "-"))))
+        ;; uses zero-idle timer so the buffer content is settled after
+        ;; the change, the cursor is moved, so we know what state we
+        ;; have to restore after auto align
+        (run-with-idle-timer
+         0 nil
+         (lambda ()
+           (if (looking-back "| *\\([^|]+\\)")
+               (let ((pos (string-trim-right (match-string 1))))
+                 (setq org-table-auto-align-in-progress t)
+                 (unwind-protect
+                     (progn
+                       (org-table-align)
+                       (search-forward pos nil t))
+                   (setq org-table-auto-align-in-progress nil)))))))))
+
+
+  (define-minor-mode org-table-auto-align-mode
+    "A mode for aligning Org mode tables automatically as you type."
+    :lighter " OrgTblAA"
+    (if org-table-auto-align-mode
+        (add-hook 'after-change-functions #'org-table-auto-align t t)
+      (remove-hook 'after-change-functions #'org-table-auto-align t)))
+
+  ;; (add-hook 'org-mode-hook #'org-table-auto-align-mode)
+#+END_SRC
 
 ** Workflow
 Now we get to the good stuff. Here we'll set some useful variables for all org functions. Org directory where I keep all my org files. 
@@ -507,20 +552,20 @@ Org has a nice way of tracking em.
 Org mode can also be used as a blog creation platform. I can write and keep blog posts locally, and then publish them to a webserver in HTML format.
 
 #+BEGIN_SRC emacs-lisp
-      (use-package org-static-blog
-        :straight t
-        :config
-        (setq org-static-blog-publish-title "comf.moe blog")
-        (setq org-static-blog-publish-url "https://comf.moe/blog/")
-        (setq org-static-blog-enable-tags t)
-        (setq org-static-blog-publish-directory "/ssh:tom@comf.moe:/var/www/comf.moe/blog/")
-        (setq org-static-blog-posts-directory "~/doc/org/journal/")
-        (setq org-static-blog-drafts-directory "~/doc/org/journal/drafts/")
-        (setq org-static-blog-enable-tags nil)
-        (setq org-export-with-toc nil)
-        (setq org-export-with-section-numbers nil)
-        ;; (setq org-static-blog-use-preview t)
-)
+  (use-package org-static-blog
+    :straight t
+    :config
+    (setq org-static-blog-publish-title "comf.moe blog")
+    (setq org-static-blog-publish-url "https://comf.moe/blog/")
+    (setq org-static-blog-enable-tags t)
+    (setq org-static-blog-publish-directory "/ssh:tom@comf.moe:/var/www/comf.moe/blog/")
+    (setq org-static-blog-posts-directory "~/doc/org/journal/")
+    (setq org-static-blog-drafts-directory "~/doc/org/journal/drafts/")
+    (setq org-static-blog-enable-tags nil)
+    (setq org-export-with-toc nil)
+    (setq org-export-with-section-numbers nil)
+    ;; (setq org-static-blog-use-preview t)
+    )
 #+END_SRC
 
 We'll have to set a long and annoying header:
