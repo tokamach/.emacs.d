@@ -5,6 +5,22 @@
 
 This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled to =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file.
 
+* Init GC Settings
+
+We set GC settings to better values for init now, and then reset them to saner values later.
+
+#+BEGIN_SRC emacs-lisp
+  (eval-and-compile
+    (setq gc-cons-threshold 402653184
+          gc-cons-percentage 0.6))
+#+END_SRC
+
+Also the compiler to keep quiet about free vars and the like, which will inevitably pop up on compilation with all the packages we use.
+
+#+BEGIN_SRC emacs-lisp
+  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+#+END_SRC
+
 * Packages
    We now use a combination of use-package and straight.el to manage packages. This gives a nice functional/declarative style of package management. Way better than trying to remember what is installed on which computer, and having to constantly call =package-install-selected-packages= on every new machine.
 
@@ -14,9 +30,15 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'use-package)
+  (setq use-package-always-defer t)
+  (setq straight-use-package-by-default t)
+
+(defvar personal-keybindings)
 #+END_SRC
 
 * Local Files
+This section is for local lisp files.
+
 Sometimes you start emacs from a shortcut, and it'll put itself in the wrong directory. This starts us in home.
 
 #+BEGIN_SRC emacs-lisp
@@ -28,7 +50,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 =/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
-  (setq custom-file (concat user-emacs-directory  "custom.el"))
+  (setq custom-file (concat user-emacs-directory  "custom"))
   (load custom-file)
   (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "colors/"))
@@ -39,42 +61,40 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 
 ** waifu-mode
     Ain't this a gem. It's a kind of image viewer, it picks random images from a given folder and shows them onscreen.
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'waifu)
-  ;; (waifu-keybind-to-dir
-  ;;  '(("m" "~/Pictures/animu/madoka_magica/madoka")
-  ;;    ("h" "~/Pictures/animu/madoka_magica/homura")
-  ;;    ("s" "~/Pictures/animu/madoka_magica/sayaka")
-  ;;    ("k" "~/Pictures/animu/madoka_magica/kyouko")
-  ;;    ("M" "~/Pictures/animu/madoka_magica/mami")
-  ;;    ("v" "~/Pictures/animu/gabriel_dropout/vigne")
-  ;;    ("f" "~/Pictures/animu/re_zero/felix")
-  ;;    ("p" "~/Pictures/animu/proggybooks")))
+#+BEGIN_SRC emacs-lisp :tangle no
+  (require 'waifu)
+  (waifu-keybind-to-dir
+   '(("m" "~/Pictures/animu/madoka_magica/madoka")
+     ("h" "~/Pictures/animu/madoka_magica/homura")
+     ("s" "~/Pictures/animu/madoka_magica/sayaka")
+     ("k" "~/Pictures/animu/madoka_magica/kyouko")
+     ("M" "~/Pictures/animu/madoka_magica/mami")
+     ("v" "~/Pictures/animu/gabriel_dropout/vigne")
+     ("f" "~/Pictures/animu/re_zero/felix")
+     ("p" "~/Pictures/animu/proggybooks")))
 #+END_SRC
 
-** Themes, font, prettifying
+** Visual Settings
     First we'll install the theme packages, and install doom-themes, loading fairy-floss cause its dope.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    :straight t
-    ;; :init (load-theme 'doom-fairy-floss t)
-    )
+  (use-package doom-themes)
+
+  ;;TODO move this somwhere else
+  (use-package bind-key
+  :ensure t
+  :config
+  (add-to-list 'same-window-buffer-names "*Personal Keybindings*"))
 
   (use-package olivetti
-    :straight t
-    :bind (("<left-margin> <mouse-1>" . olivetti-expand)
-           ("<right-margin> <mouse-1>" . olivetti-shrink)))
+    :bind
+    (("<left-margin> <mouse-1>" . olivetti-expand)
+     ("<right-margin> <mouse-1>" . olivetti-shrink)))
 
   (straight-use-package 'all-the-icons)
 
-  (use-package tao-theme
-    :straight t
-    ;; :init (load-theme 'tao-yang t)
-    )
-
+  (use-package tao-theme)
   (use-package gruvbox-theme
-    :straight t
     :init (load-theme 'gruvbox-light-soft t))
 #+END_SRC
 
@@ -138,17 +158,15 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 
   ;; better modeline
   (use-package doom-modeline
-    :straight t
-    :init (setq doom-modeline-height 15)
+        :init (setq doom-modeline-height 15)
     :hook (emacs-startup . doom-modeline-mode))
 #+END_SRC
 
-** Homepage
+** Dashboard
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package dashboard
-    :straight t)
+  (use-package dashboard)
   (require 'dashboard)
 
   (let ((imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
@@ -170,13 +188,12 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq inital-buffer-choice (lambda () (get-buffer "*dashboard*")))
 #+END_SRC
 
-
 ** Tramp
 
 Clearly we'll want to use ssh as default.
 
 #+BEGIN_SRC emacs-lisp
-  ;; tramp
+  (straight-use-package 'tramp)
   (setq tramp-default-method "ssh")
 #+END_SRC
 
@@ -184,7 +201,6 @@ This lets us connect to locally running docker containers. See [[https://willsch
 
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
-(straight-use-package 'tramp)
 (add-to-list 'tramp-methods
    (cons
     "docker"
@@ -232,10 +248,11 @@ Most of this is pretty self-explanatory. ispell exists actually (thanks macOS fo
 Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy.
 
 #+BEGIN_SRC emacs-lisp
-  (straight-use-package 'hydra)
-  ;; modal-soul, my hydras
+  (use-package hydra
+    :ensure t)
+  (straight-use-package 'avy)
   (straight-use-package 'buffer-move)
-  (load "~/.emacs.d/lisp/modal-soul.el")
+  (load "~/.emacs.d/lisp/modal-soul")
 
   (straight-use-package 'which-key)
   (which-key-mode)
@@ -245,7 +262,6 @@ Expand region is great.
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
-  :straight t
   :bind (("C-." . er/expand-region)))
 #+END_SRC
 
@@ -285,11 +301,9 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
 (straight-use-package 'projectile)
 #+END_SRC
 
-
 ** Minions
 #+BEGIN_SRC emacs-lisp
   (use-package minions
-    :straight t
     :config (minions-mode 1))
 #+END_SRC
 
@@ -298,13 +312,15 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
   (straight-use-package 'all-the-icons)
   (straight-use-package 'treemacs)
 #+END_SRC
+
 * Org mode
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
+
 ** Misc Config
 First though, a few org addon packages. org-superstar replaces the default =*= with nice unicode bullets and org-sidebar provides a handy sidebar overview of files.
+
 #+BEGIN_SRC emacs-lisp
   (use-package org-superstar
-    :straight t
     :config
     (org-superstar-configure-like-org-bullets)
     (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
@@ -389,7 +405,7 @@ My system uses time management features like the /agenda/, =org-capture=, some /
 
 #+BEGIN_SRC emacs-lisp
   (setq tokamach/org-directory "~/doc/org/")
-  (setq tokamach/org-file-list 
+  (setq tokamach/org-file-list
         `(,@(file-expand-wildcards (concat tokamach/org-directory "*.org"))))
 #+END_SRC
 
@@ -502,7 +518,6 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-download
-    :straight t
     :custom
     (org-download-screenshot-method "screencapture -i %s"))
 #+END_SRC
@@ -510,7 +525,6 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 =org-brain= dropped in favour of =org-roam=
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package org-brain
-    :straight t
     :init
     (setq org-brain-path (concat tokamach/org-directory "brain/"))
     :config
@@ -545,7 +559,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 Org has a nice way of tracking em.
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'org-modules 'habits)
+  (add-to-list 'org-modules 'habit)
 #+END_SRC
 
 ** Blog
@@ -553,7 +567,6 @@ Org mode can also be used as a blog creation platform. I can write and keep blog
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-static-blog
-    :straight t
     :config
     (setq org-static-blog-publish-title "comf.moe blog")
     (setq org-static-blog-publish-url "https://comf.moe/blog/")
@@ -603,17 +616,19 @@ preamble:
 To get the posts to fit into the template properly.
 
 * Language Config
-  Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
+Finally we've transformed the ancient magicks of emacs from a 50 year old dusty old expensive typewriter into an elegant tool to weave the fabric of code. Or something. Now we can get to our language specific config and hooks. 
 
 ** Company Mode
-    Most of these languages provide a company mode completion system. We'll just make sure the latest version is installed here so we don't have to worry about it somwhere else.
+Most of these languages provide a company mode completion system. We'll just make sure the latest version is installed here so we don't have to worry about it somwhere else.
+
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'company)
 #+END_SRC
 
 ** C/C++
-    The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
+The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
     The mode hook is to set up eglot, but since that's proved very difficult in OS dev stuff, and my main C programming is for OS dev, I just disabled it until I can be bothered.
+
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "linux"
 	c-basic-offset 4)
@@ -629,19 +644,22 @@ To get the posts to fit into the template properly.
 #+END_SRC
 
 ** Lisps
-    The language of the gods finally gets its turn. Do I want intelligent context dependent structural editing? *YES*. Do I want rainbows all over my parentheses? *YES*. Gimme that good shit.
+The language of the gods finally gets its turn. Do I want intelligent context dependent structural editing? *YES*. Do I want rainbows all over my parentheses? *YES*. Gimme that good shit.
 
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'geiser)
   (straight-use-package 'lispy)
   (straight-use-package 'rainbow-delimiters)
+  (straight-use-package 'el-fly-indent-mode)
 
+  ;; TODO split this into hook declaration then multiple use-package declarations adding to hook
   (defun tokamach/lisp-hook ()
     "Personal Lisp hook."
     (lispy-mode)
     (rainbow-delimiters-mode)
     (show-paren-mode)
-    (company-mode))
+    (company-mode)
+    (el-fly-indent-mode))
 
   (add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
   (add-hook 'common-lisp-mode-hook #'tokamach/lisp-hook)
@@ -674,16 +692,19 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'academic-phrases)
 #+END_SRC
+
 ** Matlab
-    Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
+Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'matlab-mode)
 (setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
 (setq matlab-shell-command-switches (list "-nodesktop"))
 #+END_SRC
+
 ** C#
-    We use csharp-mode for general syntax highlighting, and omnisharp for more advanced tooling.
+We use csharp-mode for general syntax highlighting, and omnisharp for more advanced tooling.
+
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'csharp-mode)
   (straight-use-package 'omnisharp)
@@ -697,12 +718,23 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 
   (add-hook 'csharp-mode-hook #'company-mode)
 #+END_SRC
+
 ** Swift/Xcode
-    Currently non working, not tangled
+Currently non working, not tangled
+
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package lsp-sourcekit
     :after lsp-mode
     :config
     (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/")
     (setq lsp-sourcekit-executable (expand-file-name "/L")))
+#+END_SRC
+
+* Regular GC Settings
+
+Now we can put the GC back to normal.
+
+#+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold 16777216
+      gc-cons-percentage 0.1)
 #+END_SRC

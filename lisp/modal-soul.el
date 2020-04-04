@@ -1,9 +1,10 @@
 (require 'hydra)
+(require 'avy)
 
 (defhydra hydra-avy ()
   "avy commands"
   ("w" avy-goto-word-1)
-  ("W" avy-goto-word-2)
+  ;; ("W" avy-goto-word-2)
   ("l" avy-goto-line))
 
 (defhydra hydra-window ()
@@ -30,7 +31,7 @@
   ("l" lispy-mode)
   ("s" show-paren-mode)
   ("o" olivetti-mode)
-  ("i" imenu-smart-list-toggle)
+  ;; ("i" imenu-smart-list-toggle)
   ("t" treemacs))
 
 (defhydra hydra-cmd (:color blue)
