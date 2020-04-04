@@ -113,6 +113,8 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 			    plan9
 			    anti-zenburn))
 
+  (require 'fringe)
+  
   (defun tokamach/pick-theme ()
     "Present a list of themes for user to pick"
     (interactive)
@@ -151,8 +153,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
   (menu-bar-mode 1)
   (when (display-graphic-p)
     (scroll-bar-mode 0)
-    ;; (fringe-mode '(1 . 1))
-    )
+    (fringe-mode '(1 . 1)))
   (setq frame-title-format "%b")
 
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
