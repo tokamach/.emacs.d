@@ -14,8 +14,4 @@
 
 (straight-use-package 'org)
 
-;; Load a compiled file if exists, otherwise tangle and interpret
-(let ((compiled-conf (expand-file-name "conf.elc" user-emacs-directory)))
-  (if (file-exists-p compiled-conf)
-      (load-file compiled-conf)
-    (org-babel-load-file (concat user-emacs-directory "conf.org"))))
+(org-babel-load-file (concat user-emacs-directory "conf.org"))

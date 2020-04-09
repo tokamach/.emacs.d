@@ -50,7 +50,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 =/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
-  (setq custom-file (concat user-emacs-directory  "custom"))
+  (setq custom-file (concat user-emacs-directory  "custom.el"))
   (load custom-file)
   (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "colors/"))
@@ -160,9 +160,8 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
-  (use-package doom-modeline
-    :init (setq doom-modeline-height 15)
-    :hook (emacs-startup . doom-modeline-mode))
+  (use-package feebleline
+    :config (feebleline-mode 1))
 #+END_SRC
 
 ** Dashboard
@@ -477,11 +476,6 @@ The org agenda page is the heart of the entire system. Assuming all the org file
                   ((org-agenda-overriding-header "One-off Tasks")
                    (org-agenda-files `(,(concat tokamach/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-            ;; Uni work
-            (tags-todo "uni"
-                       ((org-agenda-overriding-header "Uni Work")
-                        (org-agenda-files `(,(concat tokamach/org-directory "next.org")
-                                            ,(concat tokamach/org-directory "cw.org")))))
             ;; Media
             (todo "TODO"
                        ((org-agenda-overriding-header "Read/Watch/Listen")
