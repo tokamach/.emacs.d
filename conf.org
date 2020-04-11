@@ -161,7 +161,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 
   ;; better modeline
   (use-package feebleline
-    :config (feebleline-mode 1))
+    :init (feebleline-mode 1))
 #+END_SRC
 
 ** Dashboard
@@ -323,9 +323,11 @@ First though, a few org addon packages. org-superstar replaces the default =*= w
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-superstar
+    ;; :demand
     :config
     (org-superstar-configure-like-org-bullets)
-    (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
+    :hook
+    (org-mode . org-superstar-mode))
 
   (straight-use-package 'org-sidebar)
 #+END_SRC
