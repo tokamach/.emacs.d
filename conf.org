@@ -98,10 +98,10 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
     :init (load-theme 'gruvbox-light-soft t))
 #+END_SRC
 
-    Theme picker. I can add themes I like the the list =tokamach/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
+    Theme picker. I can add themes I like the the list =tk/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
     
 #+BEGIN_SRC emacs-lisp
-  (defvar tokamach/themes '(
+  (defvar tk/themes '(
 			    ;; Dark Themes
 			    base16-atlas
 			    purple-haze
@@ -115,12 +115,12 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 
   (require 'fringe)
   
-  (defun tokamach/pick-theme ()
+  (defun tk/pick-theme ()
     "Present a list of themes for user to pick"
     (interactive)
     (ivy-read
      "Pick theme:"
-     tokamach/themes 
+     tk/themes 
      :require-match t
      ;; :initial-input (car custom-enabled-themes)
      :action (lambda (theme)
@@ -130,7 +130,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 		 (fringe-mode 'minimal)))
      :update-fn (lambda ()
 		  (progn (mapc #'disable-theme custom-enabled-themes)
-			 (load-theme (nth ivy--index tokamach/themes) t)
+			 (load-theme (nth ivy--index tk/themes) t)
 			 (fringe-mode 0)))))
 #+END_SRC
 
@@ -408,9 +408,9 @@ Now we get to the good stuff. Here we'll set some useful variables for all org f
 My system uses time management features like the /agenda/, =org-capture=, some /GTD/ concepts, and a combo of /Orglzy/ and /Syncthing/ to provide a comprehensive, multiplatform, planning system.
 
 #+BEGIN_SRC emacs-lisp
-  (setq tokamach/org-directory "~/doc/org/")
-  (setq tokamach/org-file-list
-        `(,@(file-expand-wildcards (concat tokamach/org-directory "*.org"))))
+  (setq tk/org-directory "~/doc/org/")
+  (setq tk/org-file-list
+        `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))
 #+END_SRC
 
 We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
@@ -423,7 +423,7 @@ We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task 
 =inbox.org= serves as a place for captured ideas to go. 
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-default-notes-file (concat tokamach/org-directory "inbox.org"))
+  (setq org-default-notes-file (concat tk/org-directory "inbox.org"))
 #+END_SRC
 
 Once notes are captured to inbox.org, they must be /processed/. I will add any extra details such as deadlines, time to complete, and priority, then /refile/ them to their relevant org heading. Since all org files can be related in any weird number of ways, we shouldn't limit ourselves to only a small amount of targets. All org files (at least all in the org directory) are included, albeit only to a single heading level (for now).
@@ -431,7 +431,7 @@ Once notes are captured to inbox.org, they must be /processed/. I will add any e
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets
         (mapcar (lambda (e) `(,e . (:maxlevel . 2)))
-                tokamach/org-file-list))
+                tk/org-file-list))
   (setq org-refile-use-outline-path 'file)
 #+END_SRC
 
@@ -444,13 +444,13 @@ Sometimes I wanna use /pomodoro technique/.
 The same principle applies to /agenda/. We should be able to put /TODO/ headings in any org file, for any project, and have them be added to the agenda. We can filter through these in the agenda config.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files tokamach/org-file-list)
+  (setq org-agenda-files tk/org-file-list)
 #+END_SRC
 
 The org agenda page is the heart of the entire system. Assuming all the org files are in place, and the headings are processed correctly, this should be a beautiful dashboard to manage tasks from. Largely copied from [[https://gist.github.com/jethrokuan/78936a44f249e2c1a61b5184669a32d7][this gist]] (look up the rest of Jethro Kuans stuff on this though, he's got it down).
 
 #+BEGIN_SRC emacs-lisp
-  (setq tokamach/org-agenda-view
+  (setq tk/org-agenda-view
         `(("a" "Agenda"
            ;; Today
            (;; (agenda ""
@@ -465,29 +465,29 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             ;; Inbox
             (todo "TODO"
                   ((org-agenda-overriding-header "To Refile")
-                   (org-agenda-files `(,(concat tokamach/org-directory "inbox.org")))))
+                   (org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
             ;; In Progress
             (todo "NEXT"
                   ((org-agenda-overriding-header "In Progress")
-                   (org-agenda-files `(,(concat tokamach/org-directory "someday.org")
-                                       ,(concat tokamach/org-directory "next.org")
-                                       ,(concat tokamach/org-directory "cw.org")
-                                       ,(concat tokamach/org-directory "projects.org")))))
+                   (org-agenda-files `(,(concat tk/org-directory "someday.org")
+                                       ,(concat tk/org-directory "next.org")
+                                       ,(concat tk/org-directory "cw.org")
+                                       ,(concat tk/org-directory "projects.org")))))
             ;; One offs (next.org)
             (todo "TODO"
                   ((org-agenda-overriding-header "One-off Tasks")
-                   (org-agenda-files `(,(concat tokamach/org-directory "next.org")))
+                   (org-agenda-files `(,(concat tk/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
             ;; Media
             (todo "TODO"
                        ((org-agenda-overriding-header "Read/Watch/Listen")
-                        (org-agenda-files `(,(concat tokamach/org-directory "media.org")))))
+                        (org-agenda-files `(,(concat tk/org-directory "media.org")))))
             ;; Personal Stuff
             (tags-todo ":house:money:work:me:watch"
                        ((org-agenda-overriding-header "Me")))
             nil))))
 
-  (setq org-agenda-custom-commands `,tokamach/org-agenda-view)
+  (setq org-agenda-custom-commands `,tk/org-agenda-view)
   (global-set-key (kbd "C-c a") #'org-agenda)
 #+END_SRC
 
@@ -508,7 +508,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
-        `(("i" "inbox" entry (file ,(concat tokamach/org-directory "inbox.org")) "* TODO %?")))
+        `(("i" "inbox" entry (file ,(concat tk/org-directory "inbox.org")) "* TODO %?")))
 
   (global-set-key (kbd "C-c c") #'org-capture)
 #+END_SRC
@@ -525,7 +525,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package org-brain
     :init
-    (setq org-brain-path (concat tokamach/org-directory "brain/"))
+    (setq org-brain-path (concat tk/org-directory "brain/"))
     :config
     (setq org-id-track-globally t)
     (setq org-id-locations-file (concat user-emacs-directory ".org-id-locations"))
@@ -545,7 +545,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
         :hook (org-mode . org-roam-mode)
         :straight (:host github :repo "jethrokuan/org-roam")
         :custom
-        (org-roam-directory tokamach/org-directory)
+        (org-roam-directory tk/org-directory)
         :bind
         ("C-c n l" . org-roam)      
         ("C-c n t" . org-roam-today)
@@ -632,14 +632,14 @@ The siblings who don't want to be associated with each other, lumped in to the s
   (setq c-default-style "linux"
 	c-basic-offset 4)
 
-  (defun tokamach/c-c++-hook ()
+  (defun tk/c-c++-hook ()
     "Personal C/C++ hook."
     (setq company-backends
 	  (cons 'company-capf
 		(remove 'company-capf company-backends)))
     (eglot-ensure))
 
-  ;(add-hook 'c-mode-hook 'tokamach/c-c++-hook)
+  ;(add-hook 'c-mode-hook 'tk/c-c++-hook)
 #+END_SRC
 
 ** Lisps
@@ -652,7 +652,7 @@ The language of the gods finally gets its turn. Do I want intelligent context de
   (straight-use-package 'el-fly-indent-mode)
 
   ;; TODO split this into hook declaration then multiple use-package declarations adding to hook
-  (defun tokamach/lisp-hook ()
+  (defun tk/lisp-hook ()
     "Personal Lisp hook."
     (lispy-mode)
     (rainbow-delimiters-mode)
@@ -660,10 +660,10 @@ The language of the gods finally gets its turn. Do I want intelligent context de
     (company-mode)
     (el-fly-indent-mode))
 
-  (add-hook 'emacs-lisp-mode-hook  #'tokamach/lisp-hook)
-  (add-hook 'common-lisp-mode-hook #'tokamach/lisp-hook)
-  (add-hook 'scheme-mode-hook      #'tokamach/lisp-hook)
-  (add-hook 'lisp-mode-hook        #'tokamach/lisp-hook)
+  (add-hook 'emacs-lisp-mode-hook  #'tk/lisp-hook)
+  (add-hook 'common-lisp-mode-hook #'tk/lisp-hook)
+  (add-hook 'scheme-mode-hook      #'tk/lisp-hook)
+  (add-hook 'lisp-mode-hook        #'tk/lisp-hook)
 
   ;; Common Lisp
   (straight-use-package 'slime)
