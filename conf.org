@@ -3,7 +3,7 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 
-This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled to =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file.
+This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled and loaded as =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file, removing the need for any kind of bootstrapping and allowing the config to be cloned and run out of the box.
 
 * Init GC Settings
 
@@ -59,48 +59,27 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 * Editor config
   Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
 
-** waifu-mode
-    Ain't this a gem. It's a kind of image viewer, it picks random images from a given folder and shows them onscreen.
-#+BEGIN_SRC emacs-lisp :tangle no
-  (require 'waifu)
-  (waifu-keybind-to-dir
-   '(("m" "~/Pictures/animu/madoka_magica/madoka")
-     ("h" "~/Pictures/animu/madoka_magica/homura")
-     ("s" "~/Pictures/animu/madoka_magica/sayaka")
-     ("k" "~/Pictures/animu/madoka_magica/kyouko")
-     ("M" "~/Pictures/animu/madoka_magica/mami")
-     ("v" "~/Pictures/animu/gabriel_dropout/vigne")
-     ("f" "~/Pictures/animu/re_zero/felix")
-     ("p" "~/Pictures/animu/proggybooks")))
-#+END_SRC
-
-** Visual Settings
-    First we'll install the theme packages, and install doom-themes, loading fairy-floss cause its dope.
+** Theme and Font
+First we'll install the theme packages. I'm a fan of light themes for several reasons, both scientific and superstitous. First see [[https://www.quora.com/Is-dark-mode-light-text-on-a-dark-background-really-better-for-the-eyes/answer/Alan-Kay-11][this]] from Alan Kay himself on the topic, as well as many others providing further medical proof that lighter backgrounds are easier on the eyes, unless you live in a hikki nest bedroom. But being human I'm not one to blindly (lol) make decisions based purely on logical reasoning.
+The second reason is a more illogical, human one. I find that using a light theme puts my mind in a different state to a dark one, treating my editor and its text as a purer interface, a kind of smart[ish] paper or perhaps an Alto or LMI Lambda, something to be cared for, rather than the spammy, beeping, ugly fonted VGA terminals that a white on black theme reminds me of.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes)
+  (use-package tao-theme)     ;; tao yang
+  (use-package gruvbox-theme) ;; gruvbox-light-soft
+  (use-package acme-theme
+    :straight (:host github :repo "nnoodle/emacs-acme-theme")
+    :init
+    ;; variables to configure
+    (setq acme-theme-gray-rainbow-delimiters nil)
+    (setq acme-theme-more-syntax-hl t))
 
-  ;;TODO move this somwhere else
-  (use-package bind-key
-  :ensure t
-  :config
-  (add-to-list 'same-window-buffer-names "*Personal Keybindings*"))
-
-  (use-package olivetti
-    :bind
-    (("<left-margin> <mouse-1>" . olivetti-expand)
-     ("<right-margin> <mouse-1>" . olivetti-shrink)))
-
-  (straight-use-package 'all-the-icons)
-
-  (use-package tao-theme)
-  (use-package gruvbox-theme
-    :init (load-theme 'gruvbox-light-soft t))
+  (use-package parchment-theme
+    :init (load-theme 'parchment))
 #+END_SRC
 
-    Theme picker. I can add themes I like the the list =tk/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
+Theme picker. I can add themes I like the the list =tk/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
     
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (defvar tk/themes '(
 			    ;; Dark Themes
 			    base16-atlas
@@ -134,14 +113,15 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 			 (fringe-mode 0)))))
 #+END_SRC
 
-    Setting the font is pretty self explanatory. Iosevka is a nice tall font, has good programming stuff like distinguishing 0 and O, and has ligature support (although emacs is still a lil behind on automatic ligature support.)
+Setting the font is pretty self explanatory. Iosevka is a nice tall font, has good programming stuff like distinguishing 0 and O, and has ligature support (although emacs is still a lil behind on automatic ligature support.) We'll also include =all-the-icons=, which some packages will use only if it is installed.
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
   (set-frame-font "Iosevka Slab 13" nil t)
+  (straight-use-package 'all-the-icons)
 #+END_SRC
 
-    This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
+This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
 
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
@@ -160,8 +140,22 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
-  (use-package feebleline
-    :init (feebleline-mode 1))
+  ;;(use-package feebleline
+  ;;  :init (feebleline-mode 1))
+#+END_SRC
+
+** Olivetti
+#+BEGIN_SRC emacs-lisp
+  ;; This is here to avoid issues with olivetti and use-package I believe. TODO test
+  (use-package bind-key
+  :ensure t
+  :config
+  (add-to-list 'same-window-buffer-names "*Personal Keybindings*"))
+
+  (use-package olivetti
+    :bind
+    (("<left-margin> <mouse-1>" . olivetti-expand)
+     ("<right-margin> <mouse-1>" . olivetti-shrink)))
 #+END_SRC
 
 ** Dashboard
@@ -291,6 +285,21 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
   (straight-use-package
    '(ctrlf :host github :repo "raxod502/ctrlf"))
   (ctrlf-mode +1)
+#+END_SRC
+
+** waifu-mode
+    Ain't this a gem. It's a kind of image viewer, it picks random images from a given folder and shows them onscreen.
+#+BEGIN_SRC emacs-lisp :tangle no
+  (require 'waifu)
+  (waifu-keybind-to-dir
+   '(("m" "~/Pictures/animu/madoka_magica/madoka")
+     ("h" "~/Pictures/animu/madoka_magica/homura")
+     ("s" "~/Pictures/animu/madoka_magica/sayaka")
+     ("k" "~/Pictures/animu/madoka_magica/kyouko")
+     ("M" "~/Pictures/animu/madoka_magica/mami")
+     ("v" "~/Pictures/animu/gabriel_dropout/vigne")
+     ("f" "~/Pictures/animu/re_zero/felix")
+     ("p" "~/Pictures/animu/proggybooks")))
 #+END_SRC
 
 ** Magit
@@ -539,7 +548,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 #+END_SRC
 
 =org-roam=
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package org-roam
         :after org
         :hook (org-mode . org-roam-mode)
@@ -557,7 +566,7 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 ** Habits
 Org has a nice way of tracking em.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (add-to-list 'org-modules 'habit)
 #+END_SRC
 
@@ -571,7 +580,7 @@ Org mode can also be used as a blog creation platform. I can write and keep blog
     (setq org-static-blog-publish-url "https://comf.moe/blog/")
     (setq org-static-blog-enable-tags t)
     (setq org-static-blog-publish-directory "/ssh:tom@comf.moe:/var/www/comf.moe/blog/")
-    (setq org-static-blog-posts-directory "~/doc/org/journal/")
+    (setq org-static-blog-posts-directory "~/doc/org/journal/posts/")
     (setq org-static-blog-drafts-directory "~/doc/org/journal/drafts/")
     (setq org-static-blog-enable-tags nil)
     (setq org-export-with-toc nil)
@@ -584,32 +593,32 @@ We'll have to set a long and annoying header:
 
 #+BEGIN_SRC emacs-lisp
   (setq org-static-blog-page-header
-        "<meta charset=\"UTF-8\">
-        <link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon.png\">
-        <link rel=\"stylesheet\" type=\"text/css\" href=\"/index.css\">
-        <title>comf: example</title>
-        <script defer type=\"text/javascript\" src=\"/common.js\"></script>")
+"<meta charset=\"UTF-8\">
+<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon.png\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"/index.css\">
+<title>comf: example</title>
+<script defer type=\"text/javascript\" src=\"/common.js\"></script>")
 #+END_SRC
 
 preamble:
 
 #+BEGIN_SRC emacs-lisp
   (setq org-static-blog-page-preamble
-        "<div class=\"column\" id=\"links\">
-         <ul>
-          <li><a href=\"/index.html\">home</a></li>
-          <li><a href=\"/cute.html\">cute</a></li>
-          <li><a href=\"/blog/index.html\">blog</a></li>
-          <li>about</li>
-          <li>homepages:</li>
-           <ul>
-            <li><a href=\"newtab/homepage1.html\">homepage 1</a></li>
-            <li><a href=\"newtab/homepage2.html\">homepage 2</a></li>
-            <li><a href=\"newtab/homepage3.html\">homepage 3</a></li>
-            <li><a href=\"newtab/homepage4.html\">homepage 4</a></li>
-          </ul>
-         </ul>
-         </div>")
+"<div class=\"column\" id=\"links\">
+  <ul>
+    <li><a href=\"/index.html\">home</a></li>
+    <li><a href=\"/cute.html\">cute</a></li>
+    <li><a href=\"/blog/archive.html\">blog</a></li>
+    <li>about</li>
+    <li>homepages:</li>
+      <ul>
+        <li><a href=\"newtab/homepage1.html\">homepage 1</a></li>
+        <li><a href=\"newtab/homepage2.html\">homepage 2</a></li>
+        <li><a href=\"newtab/homepage3.html\">homepage 3</a></li>
+        <li><a href=\"newtab/homepage4.html\">homepage 4</a></li>
+     </ul>
+  </ul>
+</div>")
 #+END_SRC
 
 To get the posts to fit into the template properly.
@@ -654,6 +663,7 @@ The language of the gods finally gets its turn. Do I want intelligent context de
   ;; TODO split this into hook declaration then multiple use-package declarations adding to hook
   (defun tk/lisp-hook ()
     "Personal Lisp hook."
+    (electric-pair-mode)
     (lispy-mode)
     (rainbow-delimiters-mode)
     (show-paren-mode)
