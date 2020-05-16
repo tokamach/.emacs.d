@@ -324,6 +324,13 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
   (straight-use-package 'treemacs)
 #+END_SRC
 
+** PDF Tools
+Better pdf viewing
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'pdf-tools)
+#+END_SRC
+
+
 * Org mode
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
 
@@ -604,10 +611,10 @@ preamble:
 
 #+BEGIN_SRC emacs-lisp
   (setq org-static-blog-page-preamble
-"<div class=\"column\" id=\"links\">
+"<div class=\"content-box\" id=\"links\">
   <ul>
     <li><a href=\"/index.html\">home</a></li>
-    <li><a href=\"/cute.html\">cute</a></li>
+    <li>cute</li>
     <li><a href=\"/blog/archive.html\">blog</a></li>
     <li>about</li>
     <li>homepages:</li>
