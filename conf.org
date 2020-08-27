@@ -33,7 +33,7 @@ Also the compiler to keep quiet about free vars and the like, which will inevita
   (setq use-package-always-defer t)
   (setq straight-use-package-by-default t)
 
-(defvar personal-keybindings)
+  (defvar personal-keybindings)
 #+END_SRC
 
 * Local Files
@@ -188,7 +188,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
 Clearly we'll want to use ssh as default.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (straight-use-package 'tramp)
   (setq tramp-default-method "ssh")
 #+END_SRC
@@ -330,6 +330,10 @@ Better pdf viewing
   (straight-use-package 'pdf-tools)
 #+END_SRC
 
+** Elpher
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'elpher)
+#+END_SRC
 
 * Org mode
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
@@ -431,8 +435,8 @@ My system uses time management features like the /agenda/, =org-capture=, some /
 
 We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task is ongoing, and ideally should be finished before others are started.
 
-#+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-todo-keywords 
         '((sequence "TODO" "NEXT" "|" "DONE" )))
 #+END_SRC
 
@@ -485,22 +489,19 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             ;; In Progress
             (todo "NEXT"
                   ((org-agenda-overriding-header "In Progress")
-                   (org-agenda-files `(,(concat tk/org-directory "someday.org")
-                                       ,(concat tk/org-directory "next.org")
-                                       ,(concat tk/org-directory "cw.org")
-                                       ,(concat tk/org-directory "projects.org")))))
+                   (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
             ;; One offs (next.org)
             (todo "TODO"
-                  ((org-agenda-overriding-header "One-off Tasks")
+                  ((org-agenda-overriding-header "Tasks")
                    (org-agenda-files `(,(concat tk/org-directory "next.org")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-            ;; Media
-            (todo "TODO"
-                       ((org-agenda-overriding-header "Read/Watch/Listen")
-                        (org-agenda-files `(,(concat tk/org-directory "media.org")))))
+            ;; Work
+            (tags-todo "work"
+                       ((org-agenda-overriding-header "Work Stuff")
+                        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
             ;; Personal Stuff
-            (tags-todo ":house:money:work:me:watch"
-                       ((org-agenda-overriding-header "Me")))
+            ;; (tags-todo ":house:money:work:me:watch"
+            ;;            ((org-agenda-overriding-header "Me")))
             nil))))
 
   (setq org-agenda-custom-commands `,tk/org-agenda-view)
@@ -524,7 +525,8 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
 
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
-        `(("i" "inbox" entry (file ,(concat tk/org-directory "inbox.org")) "* TODO %?")))
+        `(("i" "inbox" entry (file ,(concat tk/org-directory "inbox.org")) "* TODO %?")
+          ("n" "next" entry (file ,(concat tk/org-directory "next.org"))   "* TODO %?")))
 
   (global-set-key (kbd "C-c c") #'org-capture)
 #+END_SRC
