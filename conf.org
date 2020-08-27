@@ -262,9 +262,10 @@ Expand region is great.
 #+END_SRC
 
 ** Command Completion and Search
+*** Selectrum (unused)
 I use selectrum mode now, it's just way smaller to do the same job as ivy did.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (straight-use-package
    '(selectrum :host github :repo "raxod502/selectrum"))
   (selectrum-mode +1)
@@ -281,10 +282,22 @@ I use selectrum mode now, it's just way smaller to do the same job as ivy did.
 
 Additionally, we can use CTRLF mode (alpha) to replace isearch.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (straight-use-package
    '(ctrlf :host github :repo "raxod502/ctrlf"))
   (ctrlf-mode +1)
+#+END_SRC
+
+*** Counsel (used again)
+#+BEGIN_SRC emacs-lisp
+  ;; ivy/counsel/swiper
+  (use-package counsel
+    :bind (("\C-s" . swiper))
+    :config
+    (setq swiper-use-visual-line-p #'ignore)
+    (counsel-mode))
+
+  (straight-use-package 'smex)
 #+END_SRC
 
 ** waifu-mode
@@ -644,7 +657,8 @@ Most of these languages provide a company mode completion system. We'll just mak
 
 ** C/C++
 The siblings who don't want to be associated with each other, lumped in to the same hook once again. By default emacs formats C in a bizarre GNU way. Cool, but not for me. Or whoever else has to read my C code.
-    The mode hook is to set up eglot, but since that's proved very difficult in OS dev stuff, and my main C programming is for OS dev, I just disabled it until I can be bothered.
+
+The mode hook is to set up eglot, but since that's proved very difficult in OS dev stuff, and my main C programming is for OS dev, I just disabled it until I can be bothered.
 
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "linux"
@@ -658,6 +672,14 @@ The siblings who don't want to be associated with each other, lumped in to the s
     (eglot-ensure))
 
   ;(add-hook 'c-mode-hook 'tk/c-c++-hook)
+#+END_SRC
+
+*** Work C++
+For work I have to write a different style.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq c-default-style "whitesmith"
+	    c-basic-offset 8)
 #+END_SRC
 
 ** Lisps

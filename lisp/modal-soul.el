@@ -38,8 +38,8 @@
   "command commands"
   ("w" hydra-window/body)
   ("g" magit-status)
-  ("f" find-file)
-  ("b" switch-to-buffer)
+  ("f" counsel-find-file)
+  ("b" counsel-ibuffer)
   ("p" hydra-modes/body))
 
 (defun hydra-modal/pre ()
