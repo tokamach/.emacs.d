@@ -1,3 +1,5 @@
+;;; modal-soul.el --- Pseudo modal editing and shortcut hydras. Rip Nujabes.
+
 (require 'hydra)
 (require 'avy)
 
