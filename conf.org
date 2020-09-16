@@ -28,13 +28,21 @@ Sometimes you start emacs from a shortcut, and it'll put itself in the wrong dir
   (setq default-directory (concat (getenv "HOME") "/"))
 #+END_SRC
 
+** Custom.el File
 The =custom-file= must be set so as not to pollute our init.el with =custom-set-definitions=.
-In the =/lisp= directory I keep any standalone lisp files, such as major and minor modes I wrote.
-=/colors= has any custom color schemes I've picked up that don't exist in melpa.
 
 #+BEGIN_SRC emacs-lisp
   (setq custom-file (concat user-emacs-directory  "custom.el"))
   (load custom-file)
+  (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "colors/"))
+#+END_SRC
+
+** Load Path
+In the =/lisp= directory I keep any standalone lisp files, such as major and minor modes I wrote.
+=/colors= has any custom color schemes I've picked up that don't exist as packages.
+
+#+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (concat user-emacs-directory "lisp/"))
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "colors/"))
 #+END_SRC
@@ -192,27 +200,25 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
 *** Smooth Scrolling
 #+BEGIN_SRC emacs-lisp
-    ;; smooth scroll
-    (straight-use-package 'smooth-scrolling)
-    (require 'smooth-scrolling)
-    (smooth-scrolling-mode 1)
-
-    ;; stop backups
-    (setq backup-inhibited t
-          make-backup-files nil
-          auto-save-default nil)
+  ;; smooth scroll
+  (use-package smooth-scrolling
+    :config
+    (smooth-scrolling-mode 1))
 #+END_SRC
 
 *** Undo Tree
 #+BEGIN_SRC emacs-lisp
-    (straight-use-package 'undo-tree)
-    (global-undo-tree-mode)
+  (use-package undo-tree
+    :config
+    (global-undo-tree-mode))
 #+END_SRC
 
 *** Minions
 #+BEGIN_SRC emacs-lisp
   (use-package minions
-    :config (minions-mode 1))
+    :config
+    (minions-mode 1)
+    (setq minions-mode-line-lighter "☰"))
 #+END_SRC
 
 *** Tramp
@@ -249,7 +255,7 @@ This lets us connect to locally running docker containers. See [[https://willsch
       ad-do-it))
 #+END_SRC
 
-*** Editor key bindings
+*** Key bindings
 Most of my more specific key bindings are stored in =modal-soul.el=, a set of hydras which simulate a kind of modal-editing system ala vim. Other stuff here is just avy.
 
 #+BEGIN_SRC emacs-lisp
@@ -307,6 +313,14 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
     (counsel-mode))
 
   (straight-use-package 'smex)
+#+END_SRC
+
+*** Inhibit Backups
+#+BEGIN_SRC emacs-lisp
+  ;; stop backups
+  (setq backup-inhibited t
+        make-backup-files nil
+        auto-save-default nil)
 #+END_SRC
 
 ** Programs
@@ -477,6 +491,7 @@ Sometimes I wanna use /pomodoro technique/.
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'org-pomodoro)
 #+END_SRC
+
 ** Agenda 
 The same principle applies to /agenda/. We should be able to put /TODO/ headings in any org file, for any project, and have them be added to the agenda. We can filter through these in the agenda config.
 

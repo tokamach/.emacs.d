@@ -8,7 +8,7 @@
  '(custom-safe-themes
    '("1cefd82df66eb0ad6cd3fd5baa1b684935ad88478f9ca40f74bcf080dac691b3" default))
  '(org-agenda-files
-   '("~/doc/org/camping.org" "~/doc/org/cars.org" "~/doc/org/clocktables.org" "~/doc/org/coffee.org" "~/doc/org/cw.org" "~/doc/org/done.org" "~/doc/org/hifi.org" "~/doc/org/house.org" "~/doc/org/houses.org" "~/doc/org/inbox.org" "~/doc/org/jobs.org" "~/doc/org/languages.org" "~/doc/org/media.org" "~/doc/org/money.org" "~/doc/org/moto.org" "~/doc/org/personal.org" "~/doc/org/projects.org" "~/doc/org/shopping-list.org" "~/doc/org/someday.org" "~/doc/org/todo.org")))
+   '("~/doc/org/bro.org" "~/doc/org/done.org" "~/doc/org/inbox.org" "~/doc/org/todo.org")))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
