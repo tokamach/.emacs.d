@@ -6,7 +6,6 @@
 This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled and loaded as =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file, removing the need for any kind of bootstrapping and allowing the config to be cloned and run out of the box.
 
 * Init GC Settings
-
 We set GC settings to better values for init now, and then reset them to saner values later.
 
 #+BEGIN_SRC emacs-lisp
@@ -65,7 +64,7 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
 * Editor
   Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
 ** Appearance
-*** Theme and Font
+*** Theme
 First we'll install the theme packages. I'm a fan of light themes for several reasons, both scientific and superstitous. First see [[https://www.quora.com/Is-dark-mode-light-text-on-a-dark-background-really-better-for-the-eyes/answer/Alan-Kay-11][this]] from Alan Kay himself on the topic, as well as many others providing further medical proof that lighter backgrounds are easier on the eyes, unless you live in a hikki nest bedroom. But being human I'm not one to blindly (lol) make decisions based purely on logical reasoning.
 The second reason is a more illogical, human one. I find that using a light theme puts my mind in a different state to a dark one, treating my editor and its text as a purer interface, a kind of smart[ish] paper or perhaps an Alto or LMI Lambda, something to be cared for, rather than the spammy, beeping, ugly font VGA terminals that a white on black theme reminds me of.
 
@@ -119,6 +118,7 @@ Theme picker. I can add themes I like the the list =tk/themes= and choose from t
 			 (fringe-mode 0)))))
 #+END_SRC
 
+*** Font
 Setting the font is pretty self explanatory. Iosevka is a nice tall font, has good programming stuff like distinguishing 0 and O, and has ligature support (although emacs is still a lil behind on automatic ligature support.) We'll also include =all-the-icons=, which some packages will use only if it is installed.
 
 #+BEGIN_SRC emacs-lisp
@@ -126,6 +126,7 @@ Setting the font is pretty self explanatory. Iosevka is a nice tall font, has go
   (set-frame-font "Iosevka Slab 13" nil t)
   (straight-use-package 'all-the-icons)
 #+END_SRC
+
 *** UI Simplifying
 This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
 
@@ -366,6 +367,13 @@ Better pdf viewing
   (straight-use-package 'elpher)
 #+END_SRC
 
+*** VTerm
+Better terminal emulation.
+
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'vterm)
+#+END_SRC
+
 * Org
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
 
@@ -525,7 +533,7 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             ;; Tasks TODO
             (todo "TODO"
                   ((org-agenda-overriding-header "Tasks")
-                   (org-agenda-files `(,(concat tk/org-directory "todo.org")))
+                   (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
             nil))))
 
@@ -679,8 +687,7 @@ Most of these languages provide a company mode completion system. We'll just mak
 ** LSP Mode
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :hook (
-           (c++-mode . lsp))
+    :hook ((c++-mode . lsp))
     :commands lsp lsp-register-client lsp-tramp-connection)
 
   (use-package lsp-ui :commands lsp-ui-mode)
@@ -695,15 +702,6 @@ The mode hook is to set up eglot, but since that's proved very difficult in OS d
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "linux"
 	c-basic-offset 4)
-
-  (defun tk/c-c++-hook ()
-    "Personal C/C++ hook."
-    (setq company-backends
-	  (cons 'company-capf
-		(remove 'company-capf company-backends)))
-    (eglot-ensure))
-
-  ;(add-hook 'c-mode-hook 'tk/c-c++-hook)
 #+END_SRC
 
 *** Work C++
@@ -812,7 +810,6 @@ Currently non working, not tangled
 #+END_SRC
 
 * Regular GC Settings
-
 Now we can put the GC back to normal.
 
 #+BEGIN_SRC emacs-lisp
