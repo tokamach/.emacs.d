@@ -123,7 +123,7 @@ Setting the font is pretty self explanatory. Iosevka is a nice tall font, has go
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
-  (set-frame-font "Iosevka Slab 13" nil t)
+  (set-frame-font "Iosevka Fixed Slab 13" nil t)
   (straight-use-package 'all-the-icons)
 #+END_SRC
 
@@ -217,6 +217,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 *** Minions
 #+BEGIN_SRC emacs-lisp
   (use-package minions
+    :defer 5  ;; Wait until we're idle for a bit to load.
     :config
     (minions-mode 1)
     (setq minions-mode-line-lighter "☰"))

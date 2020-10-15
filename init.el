@@ -15,4 +15,7 @@
 (straight-use-package 'org)
 
 (org-babel-load-file (concat user-emacs-directory "conf.org"))
+
+;; Fucking incredible
 (put 'downcase-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
