@@ -9,7 +9,7 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 
 We set GC settings to better values for init now, and then reset them to saner values later.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (eval-and-compile
     (setq gc-cons-threshold 402653184
           gc-cons-percentage 0.6))
@@ -65,7 +65,6 @@ The second reason is a more illogical, human one. I find that using a light them
   (use-package tao-theme)     ;; for tao-yang
   (use-package gruvbox-theme) ;; for gruvbox-light-soft
   (use-package acme-theme
-    :straight (:host github :repo "nnoodle/emacs-acme-theme")
     :init
     ;; variables to configure
     (setq acme-theme-gray-rainbow-delimiters nil)
@@ -132,10 +131,10 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (when (display-graphic-p)
     (scroll-bar-mode 0)
     (fringe-mode '(1 . 1)))
-  (setq frame-title-format "%b")
+  (setq frame-title-format "emacs: %b")
 
-  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  (add-to-list 'default-frame-alist '(ns-appearance . light))
+  ;;(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  ;;(add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
   ;;(use-package feebleline
@@ -211,17 +210,18 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 
 *** Minions
 #+BEGIN_SRC emacs-lisp
-  (use-package minions
-    :config (minions-mode 1))
+    (use-package minions
+      :defer 5
+      :config
+      (setq minions-mode-line-lighter "≡")
+      (minions-mode 1))
 #+END_SRC
 
 *** Tramp
-
-Clearly we'll want to use ssh as default.
-
 #+BEGIN_SRC emacs-lisp :tangle no
-  (straight-use-package 'tramp)
-  (setq tramp-default-method "ssh")
+      (use-package tramp
+        :defer 5
+        :config)
 #+END_SRC
 
 This lets us connect to locally running docker containers. See [[https://willschenk.com/articles/2020/tramp_tricks/][here]].
@@ -301,6 +301,7 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
 #+BEGIN_SRC emacs-lisp
   ;; ivy/counsel/swiper
   (use-package counsel
+    :defer 2
     :bind (("\C-s" . swiper))
     :config
     (setq swiper-use-visual-line-p #'ignore)
@@ -498,7 +499,7 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             (agenda ""
                     ((org-agenda-span 'week)
                      (org-agenda-overriding-header "This Week")
-                     (org-deadline-warning-days 30)))
+                     (org-deadline-warning-days 5)))
             ;; Inbox
             (todo "TODO"
                   ((org-agenda-overriding-header "Inbox")
@@ -780,7 +781,7 @@ Currently non working, not tangled
 
 Now we can put the GC back to normal.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (setq gc-cons-threshold 16777216
       gc-cons-percentage 0.1)
 #+END_SRC
