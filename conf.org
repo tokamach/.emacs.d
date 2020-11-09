@@ -73,6 +73,7 @@ The second reason is a more illogical, human one. I find that using a light them
   (use-package parchment-theme
     :init (load-theme 'parchment))
 #+END_SRC
+
 **** Obsolete Theme picker
 Theme picker. I can add themes I like the the list =tk/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
     
@@ -117,6 +118,7 @@ Setting the font is pretty self explanatory. Iosevka is a nice tall font, has go
   (set-frame-font "Iosevka Term Slab 13" nil t)
   (straight-use-package 'all-the-icons)
 #+END_SRC
+
 *** UI Simplifying
 This sections a doozy. Welcome to emacs in the 21st century. Basically we just have to disable all the ugly stuff emacs has by default, like menu bars. Who needs 'em; I have M-x, I have keybinds. Visible bell aka /SHUT THE FUCK UP EMACS/, inhibit startup because I know I'm using /"GNU Emacs, one component of the GNU/Linux operating system"/, turn off scroll bars and the weird fringes. Also =doom-modeline= makes the modeline look all nice.
 
@@ -125,7 +127,7 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (setq visible-bell t)
   (setq ring-bell-function 'ignore)
   (setq initial-scratch-message "")
-  (setq inhibit-startup-message t)
+  ;;(setq inhibit-startup-message t)
   (tool-bar-mode 0)
   (menu-bar-mode 1)
   (when (display-graphic-p)
@@ -133,8 +135,8 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
     (fringe-mode '(1 . 1)))
   (setq frame-title-format "emacs: %b")
 
-  ;;(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  ;;(add-to-list 'default-frame-alist '(ns-appearance . light))
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
   ;;(use-package feebleline
@@ -159,22 +161,26 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
 Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a cool startup page.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package dashboard)
-  (require 'dashboard)
+    (use-package dashboard)
+    (require 'dashboard)
 
-  (let ((imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
-        (random-choice (lambda (elems)
-  		       (let* ((size (length elems))
-  			      (index (random size)))
-  			 (nth index elems)))))
-    (setq dashboard-startup-banner (funcall random-choice imgs)))
+    (let ((random-choice (lambda (elems)
+                           (let* ((size (length elems))
+                                  (index (random size)))
+                             (nth index elems))))
+          (imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
+          (quotes '("You're slacking off instead of writing Lisp? Pretty cringe bro."
+                    "What Would McCarthy Do?"
+                    "Have you read your SICP today?")))
+      ;; (setq dashboard-startup-banner (funcall random-choice imgs))
+      (setq dashboard-startup-banner "~/.emacs.d/dashboard-images/pdp11-tan.png")
+      (setq dashboard-banner-logo-title (funcall random-choice quotes)))
 
-  (setq dashboard-banner-logo-title "You're slacking off instead of writing Lisp? Pretty cringe bro.")
+  (setq dashboard-image-banner-max-height 400)
+  (setq dashboard-image-banner-max-width 400)
   (setq dashboard-center-content t)
-  (setq show-week-agenda-p t)
-  (setq dashboard-items '((recents  . 5)
-                          (agenda   . 5)
-                          (projects . 5)))
+  ;;(setq show-week-agenda-p nil)
+  (setq dashboard-items '((recents . 5)))
   (setq dashboard-footer nil)
 
   (dashboard-setup-startup-hook)
@@ -278,33 +284,7 @@ Expand region is great.
 #+END_SRC
 
 *** Command Completion and Search
-**** Selectrum (unused)
-~I use selectrum mode now, it's just way smaller to do the same job as ivy did.~
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (straight-use-package
-   '(selectrum :host github :repo "raxod502/selectrum"))
-  (selectrum-mode +1)
-
-  (straight-use-package
-   '(selectrum-prescient :host github :repo "raxod502/prescient.el"
-                         :files ("selectrum-prescient.el")))
-  ;; to make sorting and filtering more intelligent
-  (selectrum-prescient-mode +1)
-  ;; to save your command history on disk, so the sorting gets more
-  ;; intelligent over time
-  (prescient-persist-mode +1)
-#+END_SRC
-
-Additionally, we can use CTRLF mode (alpha) to replace isearch.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (straight-use-package
-   '(ctrlf :host github :repo "raxod502/ctrlf"))
-  (ctrlf-mode +1)
-#+END_SRC
-
-**** Counsel (used again)
+**** Ivy/Counsel/Swiper
 #+BEGIN_SRC emacs-lisp
   ;; ivy/counsel/swiper
   (use-package counsel
@@ -315,6 +295,19 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
     (counsel-mode))
 
   (straight-use-package 'smex)
+#+END_SRC
+
+*** Ivy Posframe
+Show Ivy and related completion things in a posframe, instead of just the minibuffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-posframe
+  :config
+  (setq ivy-posframe-display-functions-alist
+      '((swiper          . ivy-posframe-display-at-point)
+        (complete-symbol . ivy-posframe-display-at-point)
+        (counsel-M-x     . ivy-posframe-display-at-frame-center)
+        (t               . ivy-posframe-display))))
 #+END_SRC
 
 ** Programs
@@ -352,12 +345,35 @@ Additionally, we can use CTRLF mode (alpha) to replace isearch.
 *** PDF Tools
 Better pdf viewing
 #+BEGIN_SRC emacs-lisp
-  (straight-use-package 'pdf-tools)
+  (use-package pdf-tools)
 #+END_SRC
 
 *** Elpher
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'elpher)
+#+END_SRC
+
+*** rcirc
+#+BEGIN_SRC emacs-lisp
+    (require 'rcirc)
+    (add-hook 'rcirc-mode-hook (lambda ()
+                                 (rcirc-omit-mode)
+                                 (turn-on-visual-line-mode)))
+
+  (setq rcirc-server-alist
+        '(("irc.freenode.net"
+           :channels ("#emacs" "#lisp" "#lispcafe" "#lobsters" "#sushigirl")
+           :nick "patchy")))
+
+  (setq rcirc-authinfo
+        '(("freenode" nickserv "patchy" "walkytalky")))
+
+  (setq rcirc-prompt "»» "
+        rcirc-time-format "%H:%M "
+        rcirc-fill-flag t
+        rcirc-default-nick "sasha"
+        rcirc-default-full-name "just another soul floating through digital space"
+        rcirc-buffer-maximum-lines 1000)
 #+END_SRC
 
 * Org
@@ -462,7 +478,7 @@ We should modify the /TODO/ keywords to add a 'NEXT' keyword. This means a task 
 
 #+BEGIN_SRC emacs-lisp :tangle no
   (setq org-todo-keywords 
-        '((sequence "TODO" "NEXT" "|" "DONE" )))
+        '((sequence "TODO" "WAIT" "|" "DONE" )))
 #+END_SRC
 
 =inbox.org= serves as a place for captured ideas to go. 
@@ -485,6 +501,7 @@ Sometimes I wanna use /pomodoro technique/.
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'org-pomodoro)
 #+END_SRC
+
 ** Agenda 
 The same principle applies to /agenda/. We should be able to put /TODO/ headings in any org file, for any project, and have them be added to the agenda. We can filter through these in the agenda config.
 
@@ -599,64 +616,50 @@ Org has a nice way of tracking em.
 #+END_SRC
 
 ** Blog
-Org mode can also be used as a blog creation platform. I can write and keep blog posts locally, and then publish them to a webserver in HTML format.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-static-blog
-    :config
-    (setq org-static-blog-publish-title "comf.moe blog")
-    (setq org-static-blog-publish-url "https://comf.moe/blog/")
-    (setq org-static-blog-enable-tags t)
-    (setq org-static-blog-publish-directory "/ssh:tom@comf.moe:/var/www/comf.moe/blog/")
-    (setq org-static-blog-posts-directory "~/doc/org/journal/posts/")
-    (setq org-static-blog-drafts-directory "~/doc/org/journal/drafts/")
-    (setq org-static-blog-enable-tags nil)
-    (setq org-export-with-toc nil)
-    (setq org-export-with-section-numbers nil)
-    ;; (setq org-static-blog-use-preview t)
-    )
-#+END_SRC
-
-We'll have to set a long and annoying header:
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-static-blog-page-header
-"<meta charset=\"UTF-8\">
-<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/favicon.png\">
-<link rel=\"stylesheet\" type=\"text/css\" href=\"/index.css\">
-<title>comf: example</title>
-<script defer type=\"text/javascript\" src=\"/common.js\"></script>")
-#+END_SRC
-
-preamble:
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-static-blog-page-preamble
-"<div class=\"content-box\" id=\"links\">
-  <ul>
-    <li><a href=\"/index.html\">home</a></li>
-    <li>cute</li>
-    <li><a href=\"/blog/archive.html\">blog</a></li>
-    <li>about</li>
-    <li>homepages:</li>
-      <ul>
-        <li><a href=\"newtab/homepage1.html\">homepage 1</a></li>
-        <li><a href=\"newtab/homepage2.html\">homepage 2</a></li>
-        <li><a href=\"newtab/homepage3.html\">homepage 3</a></li>
-        <li><a href=\"newtab/homepage4.html\">homepage 4</a></li>
-     </ul>
-  </ul>
-</div>")
-#+END_SRC
-
-To get the posts to fit into the template properly.
+Org mode can also be used as a blog creation platform. I can write and keep blog posts locally, and then publish them to a webserver in HTML format. We publish using the =org-publish= settings in the next heading.
 
 ** Site Publishing
-Pusblishing my website. Written in org files and published to HTML/Gemini.
+Pusblishing my website. Written in org files and published to HTML/Gemini. Will replace Blog.
+
+But first we'll have to quickly pull in an org-mode gemini exporter. I was writing my own, but Justin Abrahms version is pretty good.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-html-postamble nil)
-  (setq org-export-with-smart-quotes t)
+  (load "~/.emacs.d/lisp/ox-gemini/ox-gemini.el")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-project-alist
+        '(("site-root"
+           :base-directory "~/doc/site/"
+           :base-extension "org"
+           :section-numbers nil
+           :table-of-contents nil
+           :publishing-function org-html-publish-to-html
+           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/")
+
+          ("site-static"
+           :base-directory "~/doc/site/"
+           :base-extension "css\\|html\\|js\\|jpg\\|png\\|gif"
+           :recursive t
+           :publishing-function org-publish-attachment
+           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/")
+
+          ("site-blog"
+           :base-directory "~/doc/blog/"
+           :base-extension "org"
+           :auto-sitemap t
+                                          ;           :sitemap-filename "index"
+           :publishing-function org-html-publish-to-html
+           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/blog/")
+
+          ("site-gemini"
+           :base-directory "~/doc/site/"
+           :publishing-function org-gemini-publish-to-gemini
+           :publishing-directory "/ssh:comf.moe:/var/gemini/")
+
+          ;; TODO ox-gemini publishing
+
+          ("site" :components ("site-root" "site-static" "site-blog" "site-gemini"))))
 #+END_SRC
 
 * Languages
@@ -721,11 +724,12 @@ The language of the gods finally gets its turn. Do I want intelligent context de
   (add-hook 'lisp-mode-hook        #'tk/lisp-hook)
 
   ;; Common Lisp
-  (straight-use-package 'slime)
-  (straight-use-package 'slime-company)
-  (require 'slime)
-  (setq inferior-lisp-program "/opt/local/bin/sbcl")
-  (slime-setup '(slime-fancy slime-company))
+  (use-package sly)
+
+  ;; (straight-use-package 'slime-company)
+  ;; (require 'slime)
+  ;; (setq inferior-lisp-program "/opt/local/bin/sbcl")
+  ;; (slime-setup '(slime-fancy slime-company))
 #+END_SRC
 
 ** Latex
