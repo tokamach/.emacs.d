@@ -688,8 +688,9 @@ Most of these languages provide a company mode completion system. We'll just mak
 ** LSP Mode
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :hook ((c++-mode . lsp))
-    :commands lsp lsp-register-client lsp-tramp-connection)
+    ;; :hook ((c++-mode . lsp))
+    ;; :commands lsp lsp-register-client lsp-tramp-connection
+    )
 
   (use-package lsp-ui :commands lsp-ui-mode)
   (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
@@ -703,23 +704,6 @@ The mode hook is to set up eglot, but since that's proved very difficult in OS d
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style "linux"
 	c-basic-offset 4)
-#+END_SRC
-
-*** Work C++
-For work I have to write a different style.
-
-#+BEGIN_SRC emacs-lisp
-(setq c-default-style "whitesmith"
-	    c-basic-offset 8)
-#+END_SRC
-
-*** LSP Specific
-#+BEGIN_SRC emacs-lisp
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "clangd-8")
-                    :major-modes '(c++-mode)
-                    :remote? t
-                    :server-id 'clangd-remote))
 #+END_SRC
 
 ** Lisps
@@ -809,6 +793,36 @@ Currently non working, not tangled
     (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/")
     (setq lsp-sourcekit-executable (expand-file-name "/L")))
 #+END_SRC
+
+* Work
+** TODO Export this to a private external file
+** Proxy
+Have to set a proxy for the work VPN.
+
+#+BEGIN_SRC emacs-lisp
+    (setq url-proxy-services '(("no_proxy" . "gitlab.iotrap.com")
+                               ("http" . "http://bragg.iotrap.com:3128")
+                               ("https" . "http://bragg.iotrap.com:3128")))
+#+END_SRC
+
+** Work C++
+For work I have to write a different style.
+
+#+BEGIN_SRC emacs-lisp
+(setq c-default-style "whitesmith"
+	    c-basic-offset 8)
+#+END_SRC
+
+We can also use lsp-mode for some C++ goodies.
+
+#+BEGIN_SRC emacs-lisp
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "clangd-8")
+                    :major-modes '(c++-mode)
+                    :remote? t
+                    :server-id 'clangd-remote))
+#+END_SRC
+
 
 * Regular GC Settings
 Now we can put the GC back to normal.
