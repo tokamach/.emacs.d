@@ -168,12 +168,13 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
                            (let* ((size (length elems))
                                   (index (random size)))
                              (nth index elems))))
-          (imgs (file-expand-wildcards (concat user-emacs-directory "/dashboard-images/*.png")))
+          (imgs (append (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.png"))
+                        (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.jpg"))
+                        (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.svg"))))
           (quotes '("You're slacking off instead of writing Lisp? Pretty cringe bro."
                     "What Would McCarthy Do?"
                     "Have you read your SICP today?")))
-      ;; (setq dashboard-startup-banner (funcall random-choice imgs))
-      (setq dashboard-startup-banner "~/.emacs.d/dashboard-images/pdp11-tan.png")
+      (setq dashboard-startup-banner (funcall random-choice imgs))
       (setq dashboard-banner-logo-title (funcall random-choice quotes)))
 
   (setq dashboard-image-banner-max-height 400)
@@ -181,7 +182,7 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq dashboard-center-content t)
   ;;(setq show-week-agenda-p nil)
   (setq dashboard-items '((recents . 5)))
-  (setq dashboard-footer nil)
+  (setq dashboard-set-footer nil)
 
   (dashboard-setup-startup-hook)
   (setq inital-buffer-choice (lambda () (get-buffer "*dashboard*")))
@@ -301,13 +302,14 @@ Expand region is great.
 Show Ivy and related completion things in a posframe, instead of just the minibuffer.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-posframe
-  :config
-  (setq ivy-posframe-display-functions-alist
-      '((swiper          . ivy-posframe-display-at-point)
-        (complete-symbol . ivy-posframe-display-at-point)
-        (counsel-M-x     . ivy-posframe-display-at-frame-center)
-        (t               . ivy-posframe-display))))
+  (use-package ivy-posframe
+    :after counsel
+    :config
+    (setq ivy-posframe-display-functions-alist
+          '((swiper          . ivy-posframe-display-at-point)
+            (complete-symbol . ivy-posframe-display-at-point)
+            (counsel-M-x     . ivy-posframe-display-at-frame-center)
+            (t               . ivy-posframe-display))))
 #+END_SRC
 
 ** Programs
