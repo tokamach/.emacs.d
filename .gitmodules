@@ -1,0 +1,3 @@
+[submodule "lisp/ox-gemini"]
+	path = lisp/ox-gemini
+	url = https://git.sr.ht/~abrahms/ox-gemini
