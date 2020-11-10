@@ -1,4 +1,8 @@
-;; -*- lexical-binding: t; -*-
+;;; ca.el --- Elementary Cellular Automata for Emacs -*- lexical-binding: t; -*-
+
+;;; Commentary:
+;; Not much to say here. Could do with some speedup, and proper edge handling.
+;; I really use (loop) too much hehe.
 
 (defconst cell-size 2)
 
@@ -13,11 +17,12 @@
 (defun rule-lookup (rule a b c)
   (aref rule (logior (lsh a 2)
 		     (lsh b 1)
-		     c)))
+		     (lsh c 0))))
 
 (defun evolve (pop rule)
   "Take a variable size pop POP and evolve according to RULE."
   ;; TODO ignore edges i.e. start at 1 and end at len - 1
+  ;; TODO ^ don't do that, instead start at 0 but fake (-1) and (len+1)
   (append '(0) (loop for (a b c) on pop
 		     when (not (eq c nil))
 		     collect (rule-lookup rule a b c))
@@ -45,6 +50,22 @@ POP specifies a custom population, which defaults to a single 1 in the centre."
     (loop for i from 0 upto maxgens
 	  for iter-pop = pop then (evolve iter-pop rule)
 	  append (draw-pop-gen iter-pop i))))
+
+(defun ca-random (rule)
+  "Draw a 1d cellular automata in a new *ca* buffer, following RULE,
+with a random initial population."
+  (interactive "nRule: ")
+  (switch-to-buffer "*ca*")
+  (erase-buffer)
+  (let* ((svg (svg-create (window-pixel-width) (window-pixel-height)))
+	 (svg-width (cdr (assoc 'width (cadr svg))))
+	 (max-gens (/ (window-pixel-height) cell-size))
+	 (rule-arr (make-rule rule)))
+    (setq svg (append svg (draw-rule svg rule-arr max-gens
+				     (loop for i from 0 upto (/ svg-width cell-size)
+					   collect (random 2)))))
+    (svg-insert-image svg)
+    nil))
 
 (defun ca (rule)
   "Draw a 1d cellular automata in a new *ca* buffer, following RULE."
