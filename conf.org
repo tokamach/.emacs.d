@@ -137,7 +137,7 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (setq initial-scratch-message "")
   ;;(setq inhibit-startup-message t)
   (tool-bar-mode 0)
-  (menu-bar-mode 1)
+  (menu-bar-mode 0)
   (when (display-graphic-p)
     (scroll-bar-mode 0)
     (fringe-mode '(1 . 1)))
@@ -189,7 +189,8 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
   (setq dashboard-image-banner-max-width 400)
   (setq dashboard-center-content t)
   ;;(setq show-week-agenda-p nil)
-  (setq dashboard-items '((recents . 5)))
+  (setq dashboard-items '((recents . 5)
+                          (projects . 5)))
   (setq dashboard-set-footer nil)
 
   (dashboard-setup-startup-hook)
@@ -361,7 +362,10 @@ Show Ivy and related completion things in a posframe, instead of just the minibu
 *** PDF Tools
 Better pdf viewing
 #+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools)
+  (use-package pdf-tools
+    :config
+    (pdf-loader-install)
+    (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1))))
 #+END_SRC
 
 *** Elpher
@@ -440,12 +444,21 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-fragtog
-    :straight (:host github :repo "io12/org-fragtog")
-    :init (add-hook 'org-mode-hook 'org-fragtog-mode))
+    ;;:straight (:host github :repo "io12/org-fragtog")
+    :hook (org-mode-hook . org-fragtog-mode))
 #+END_SRC 
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-inlinetask)
+#+END_SRC
+
+*** Variable Pitch
+Using =org-variable-pitch= we preserve whitespace spacing but use the variable pitch font for text.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-variable-pitch
+    :config (org-variable-pitch-setup)
+    :hook (org-mode . org-variable-pitch-minor-mode))
 #+END_SRC
 
 ** Table
@@ -753,7 +766,7 @@ The language of the gods finally gets its turn. Do I want intelligent context de
 This is really just wrestling with macOS. AuCTeX is really good out of the box.
 
 #+BEGIN_SRC emacs-lisp
-(straight-use-package 'auctex)
+(use-package auctex)
 (straight-use-package 'latex-pretty-symbols)
 (straight-use-package 'exec-path-from-shell)
 
