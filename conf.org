@@ -26,6 +26,8 @@ Sometimes you start emacs from a shortcut, and it'll put itself in the wrong dir
 
 #+BEGIN_SRC emacs-lisp
   (setq default-directory (concat (getenv "HOME") "/"))
+  (when (not (boundp 'user-emacs-directory))
+    (setq user-emacs-directory "~/.emacs.d/"))
 #+END_SRC
 
 The =custom-file= must be set so as not to pollute our init.el with =custom-set-definitions=.
@@ -115,7 +117,7 @@ Setting the font is pretty self explanatory. Iosevka is a nice tall font, has go
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
-  (set-frame-font "Iosevka Term Slab 13" nil t)
+  (set-frame-font "Iosevka Fixed Slab 13" nil t)
   (straight-use-package 'all-the-icons)
 #+END_SRC
 
@@ -127,9 +129,7 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (setq visible-bell t)
   (setq ring-bell-function 'ignore)
   (setq initial-scratch-message "")
-  ;;(setq inhibit-startup-message t)
   (tool-bar-mode 0)
-  (menu-bar-mode 0)
   (when (display-graphic-p)
     (scroll-bar-mode 0)
     (fringe-mode '(1 . 1)))
@@ -139,8 +139,8 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
-  ;;(use-package feebleline
-  ;;  :init (feebleline-mode 1))
+  (use-package feebleline
+    )
 #+END_SRC
 
 *** Olivetti
@@ -299,7 +299,7 @@ Expand region is great.
   (straight-use-package 'smex)
 #+END_SRC
 
-*** Ivy Posframe
+***** Ivy Posframe
 Show Ivy and related completion things in a posframe, instead of just the minibuffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -311,6 +311,43 @@ Show Ivy and related completion things in a posframe, instead of just the minibu
             (complete-symbol . ivy-posframe-display-at-point)
             (counsel-M-x     . ivy-posframe-display-at-frame-center)
             (t               . ivy-posframe-display))))
+#+END_SRC
+**** IComplete
+Alternatively we can use the built-in IComplete system.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(icomplete-mode)
+#+END_SRC
+
+With Orderless:
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package orderless
+    :ensure t
+    :init (icomplete-mode) ; optional but recommended!
+    :custom (completion-styles '(orderless)))
+#+END_SRC
+
+and
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package icomplete-vertical
+  :ensure t
+  :demand t
+  :custom
+  (completion-styles '(partial-completion substring))
+  (completion-category-overrides '((file (styles basic substring))))
+  (read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
+  :config
+  (icomplete-mode)
+  (icomplete-vertical-mode)
+  :bind (:map icomplete-minibuffer-map
+              ("<down>" . icomplete-forward-completions)
+              ("C-n" . icomplete-forward-completions)
+              ("<up>" . icomplete-backward-completions)
+              ("C-p" . icomplete-backward-completions)
+              ("C-v" . icomplete-vertical-toggle)))
 #+END_SRC
 
 ** Programs
@@ -382,6 +419,12 @@ Better pdf viewing
         rcirc-buffer-maximum-lines 1000)
 #+END_SRC
 
+*** matrix-chat
+#+BEGIN_SRC emacs-lisp
+(use-package matrix-client
+  :straight (:host github :repo "alphapapa/matrix-client.el"))
+#+END_SRC
+
 * Org
 As I spend so much time and effort on /org mode/ I feel it deserves a whole section and a full explanation. 
 
@@ -410,7 +453,6 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 
 #+BEGIN_SRC emacs-lisp
   (setq org-hide-emphasis-markers t)
-  ;(add-hook 'org-mode-hook 'variable-pitch-mode)
 #+END_SRC
 
 =org-indent-mode= handles indentation, or the lack thereof. Org files should be saved without indentation, and org-indent-mode will display them as if they were. Naturally its important for org-indent-mode to always be enabled, so that the lack of indentation is hidden away.
@@ -675,6 +717,18 @@ But first we'll have to quickly pull in an org-mode gemini exporter. I was writi
           ;; TODO ox-gemini publishing
 
           ("site" :components ("site-root" "site-static" "site-blog" "site-gemini"))))
+#+END_SRC
+
+** Finance
+*** Payday Function
+I get payed on the last friday of the month. ~There's no default org function for this, so I have to do it manually.~ I use =diary-float= instead.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun tk/last-friday-of-month (date)
+    "Return `t` if date is the last friday in the month."
+    (let ((day (calendar-extract-day date)))
+      (and
+       (eq day 5) ; It's a friday)))
 #+END_SRC
 
 * Languages
