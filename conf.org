@@ -5,16 +5,7 @@
 
 This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled and loaded as =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file, removing the need for any kind of bootstrapping and allowing the config to be cloned and run out of the box.
 
-* Init GC Settings
-
-We set GC settings to better values for init now, and then reset them to saner values later.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (eval-and-compile
-    (setq gc-cons-threshold 402653184
-          gc-cons-percentage 0.6))
-#+END_SRC
-
+* Shut up byte compiler
 Also the compiler to keep quiet about free vars and the like, which will inevitably pop up on compilation with all the packages we use.
 
 #+BEGIN_SRC emacs-lisp
@@ -173,7 +164,11 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
                         (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.svg"))))
           (quotes '("You're slacking off instead of writing Lisp? Pretty cringe bro."
                     "What Would McCarthy Do?"
-                    "Have you read your SICP today?")))
+                    "Have you read your SICP today?"
+                    "Don't think! Feel!"
+                    "THINK!"
+                    "Do it for her."
+                    "Remember, it's all in your head.")))
       (setq dashboard-startup-banner (funcall random-choice imgs))
       (setq dashboard-banner-logo-title (funcall random-choice quotes)))
 
@@ -692,31 +687,31 @@ But first we'll have to quickly pull in an org-mode gemini exporter. I was writi
            :section-numbers nil
            :table-of-contents nil
            :publishing-function org-html-publish-to-html
-           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/")
+           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/")
 
           ("site-static"
            :base-directory "~/doc/site/"
            :base-extension "css\\|html\\|js\\|jpg\\|png\\|gif"
            :recursive t
            :publishing-function org-publish-attachment
-           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/")
+           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/")
 
           ("site-blog"
            :base-directory "~/doc/blog/"
            :base-extension "org"
            :auto-sitemap t
-                                          ;           :sitemap-filename "index"
+           :auto-sitemap "index"
            :publishing-function org-html-publish-to-html
-           :publishing-directory "/ssh:comf.moe:/var/www/comf.moe/blog/")
+           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/blog/")
 
-          ("site-gemini"
-           :base-directory "~/doc/site/"
-           :publishing-function org-gemini-publish-to-gemini
-           :publishing-directory "/ssh:comf.moe:/var/gemini/")
+          ;;("site-gemini"
+          ;; :base-directory "~/doc/site/"
+          ;; :publishing-function org-gemini-publish-to-gemini
+          ;; :publishing-directory "/ssh:comf.moe:/usr/local/gemini/")
 
           ;; TODO ox-gemini publishing
 
-          ("site" :components ("site-root" "site-static" "site-blog" "site-gemini"))))
+          ("site" :components ("site-root" "site-static" "site-blog"))))
 #+END_SRC
 
 ** Finance
@@ -766,6 +761,14 @@ For work I have to write a different style.
 #+BEGIN_SRC emacs-lisp :tangle no
 (setq c-default-style "whitesmith"
 	    c-basic-offset 8)
+#+END_SRC
+
+*** LSP
+I use LSP in non-work codebases sometimes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eglot)
+  (use-package yasnippet)
 #+END_SRC
 
 ** Lisps
@@ -855,13 +858,4 @@ Currently non working, not tangled
     :config
     (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/")
     (setq lsp-sourcekit-executable (expand-file-name "/L")))
-#+END_SRC
-
-* Regular GC Settings
-
-Now we can put the GC back to normal.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq gc-cons-threshold 16777216
-      gc-cons-percentage 0.1)
 #+END_SRC
