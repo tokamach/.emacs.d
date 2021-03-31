@@ -5,11 +5,11 @@
 
 This is my emacs init written in org mode. In order to avoid a ton of problems, this file, =conf.org=, gets tangled and loaded as =conf.el=. =init.el= is an already existing emacs lisp file that initialises the =straight.el= package manager, loads a new version of org-mode, then tangles and loads this file, removing the need for any kind of bootstrapping and allowing the config to be cloned and run out of the box.
 
-* Shut up byte compiler
-Also the compiler to keep quiet about free vars and the like, which will inevitably pop up on compilation with all the packages we use.
+* Work or Home Mode
+Since I use emacs at both work and home I'd rather be able to share a single config but configure slightly differently depending on where I am. I set =tk/environment= to allow the config to adapt as needed.
 
 #+BEGIN_SRC emacs-lisp
-  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+  (setq tk/env 'home)
 #+END_SRC
 
 * Local Lisp Files
@@ -43,26 +43,18 @@ In the =/lisp= directory I keep any standalone lisp files, such as major and min
   (straight-use-package 'use-package)
   (setq use-package-always-defer t)
   (setq straight-use-package-by-default t)
-
-  (defvar personal-keybindings)
 #+END_SRC
 
 * Editor
   Here we configure the emacs text editor itself, the old fashioned bitch. Lots of this is just disabling menu bars, scroll bars, bells, cursors yada yada yada...
 ** Appearance
-*** Theme and Font
-First we'll install the theme packages. I'm a fan of light themes for several reasons, both scientific and superstitous. First see [[https://www.quora.com/Is-dark-mode-light-text-on-a-dark-background-really-better-for-the-eyes/answer/Alan-Kay-11][this]] from Alan Kay himself on the topic, as well as many others providing further medical proof that lighter backgrounds are easier on the eyes, unless you live in a hikki nest bedroom. But being human I'm not one to blindly (lol) make decisions based purely on logical reasoning.
-The second reason is a more illogical, human one. I find that using a light theme puts my mind in a different state to a dark one, treating my editor and its text as a purer interface, a kind of smart[ish] paper or perhaps an Alto or LMI Lambda, something to be cared for, rather than the spammy, beeping, ugly font VGA terminals that a white on black theme reminds me of.
+*** Theme
+First we'll install the theme packages. I'm a fan of light themes for several reasons, both scientific and superstitous. First see [[https://www.quora.com/Is-dark-mode-light-text-on-a-dark-background-really-better-for-the-eyes/answer/Alan-Kay-11][this]] from Alan Kay himself on the topic, as well as many others providing further medical proof that lighter backgrounds are easier on the eyes, unless you live in a hikki nest bedroom.
+But being human I'm not one to blindly (lol) make decisions based on purely logical reasoning, so the the second motive is a more illogical, human one. I find that using a light theme puts my mind in a different state to a dark one, treating my editor and its text as a purer interface, a kind of smart[ish] paper or perhaps an Alto or LMI Lambda, something to be cared for, rather than the spammy, beeping, ugly font VGA terminals that a white on black theme reminds me of.
 
 #+BEGIN_SRC emacs-lisp
   (use-package tao-theme)     ;; for tao-yang
   (use-package gruvbox-theme) ;; for gruvbox-light-soft
-  (use-package acme-theme
-    :init
-    ;; variables to configure
-    (setq acme-theme-gray-rainbow-delimiters nil)
-    (setq acme-theme-more-syntax-hl t))
-
   (use-package parchment-theme
     :init (load-theme 'parchment))
 #+END_SRC
@@ -104,6 +96,7 @@ Theme picker. I can add themes I like the the list =tk/themes= and choose from t
 			 (fringe-mode 0)))))
 #+END_SRC
 
+*** Font
 Setting the font is pretty self explanatory. Iosevka is a nice tall font, has good programming stuff like distinguishing 0 and O, and has ligature support (although emacs is still a lil behind on automatic ligature support.) We'll also include =all-the-icons=, which some packages will use only if it is installed.
 
 #+BEGIN_SRC emacs-lisp
@@ -130,22 +123,7 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
   (add-to-list 'default-frame-alist '(ns-appearance . light))
 
   ;; better modeline
-  (use-package feebleline
-    )
-#+END_SRC
-
-*** Olivetti
-#+BEGIN_SRC emacs-lisp
-  ;; This is here to avoid issues with olivetti and use-package I believe. TODO test
-  (use-package bind-key
-  :ensure t
-  :config
-  (add-to-list 'same-window-buffer-names "*Personal Keybindings*"))
-
-  (use-package olivetti
-    :bind
-    (("<left-margin> <mouse-1>" . olivetti-expand)
-     ("<right-margin> <mouse-1>" . olivetti-shrink)))
+  (use-package feebleline)
 #+END_SRC
 
 *** Dashboard
@@ -159,16 +137,18 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
                            (let* ((size (length elems))
                                   (index (random size)))
                              (nth index elems))))
+	        ;; TODO: if (= tk/env 'home) use some other pics too (~/Pictures/animu maybe?)
           (imgs (append (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.png"))
                         (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.jpg"))
                         (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.svg"))))
-          (quotes '("You're slacking off instead of writing Lisp? Pretty cringe bro."
+          (quotes `("You're slacking off instead of writing Lisp? Pretty cringe bro."
                     "What Would McCarthy Do?"
                     "Have you read your SICP today?"
                     "Don't think! Feel!"
                     "THINK!"
-                    "Do it for her."
-                    "Remember, it's all in your head.")))
+                    ,(if (eq tk/env 'home)
+                         "Do it for her."
+                       "Remember, it's all in your head."))))
       (setq dashboard-startup-banner (funcall random-choice imgs))
       (setq dashboard-banner-logo-title (funcall random-choice quotes)))
 
@@ -185,13 +165,6 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
 #+END_SRC
 
 ** Editor Functionality
-*** Flyspell
-#+BEGIN_SRC emacs-lisp
-    ;; flyspell
-    (setq ispell-program-name "/opt/local/bin/ispell")
-
-#+END_SRC
-
 *** Smooth Scrolling
 #+BEGIN_SRC emacs-lisp
     ;; smooth scroll
@@ -823,19 +796,20 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 (straight-use-package 'academic-phrases)
 #+END_SRC
 
-** Matlab
+** Unused
+*** Matlab
 Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tanlge no
 (straight-use-package 'matlab-mode)
 (setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
 (setq matlab-shell-command-switches (list "-nodesktop"))
 #+END_SRC
 
-** C#
+*** C#
 We use csharp-mode for general syntax highlighting, and omnisharp for more advanced tooling.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (straight-use-package 'csharp-mode)
   (straight-use-package 'omnisharp)
 
@@ -849,7 +823,7 @@ We use csharp-mode for general syntax highlighting, and omnisharp for more advan
   (add-hook 'csharp-mode-hook #'company-mode)
 #+END_SRC
 
-** Swift/Xcode
+*** Swift/Xcode
 Currently non working, not tangled
 
 #+BEGIN_SRC emacs-lisp :tangle no
