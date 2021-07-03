@@ -101,7 +101,7 @@ Setting the font is pretty self explanatory. Iosevka is a nice tall font, has go
 
 #+BEGIN_SRC emacs-lisp
   ;; fonts
-  (set-frame-font "Iosevka Fixed Slab 13" nil t)
+  (set-frame-font "Iosevka Term Slab 13" nil t)
   (straight-use-package 'all-the-icons)
 #+END_SRC
 
@@ -433,12 +433,16 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-fragtog
-    ;;:straight (:host github :repo "io12/org-fragtog")
+    :config (setq org-latex-create-formula-image-program 'dvisvgm) ;; For HD latex
     :hook (org-mode-hook . org-fragtog-mode))
 #+END_SRC 
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-inlinetask)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq org-log-into-drawer "LOGBOOK")
 #+END_SRC
 
 *** Variable Pitch
@@ -495,6 +499,7 @@ My system uses time management features like the /agenda/, =org-capture=, some /
 
 #+BEGIN_SRC emacs-lisp
   (setq tk/org-directory "~/doc/org/")
+  (setq tk/org-wiki-directory "~/doc/org/wiki/")
   (setq tk/org-file-list
         `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))
 #+END_SRC
@@ -553,10 +558,10 @@ The org agenda page is the heart of the entire system. Assuming all the org file
             (todo "TODO"
                   ((org-agenda-overriding-header "Inbox")
                    (org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
-            ;; In Progress
-            (todo "NEXT"
-                  ((org-agenda-overriding-header "In Progress")
-                   (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
+            ;; Waiting on
+            ;; (todo "WAIT"
+            ;;       ((org-agenda-overriding-header "Waiting On")
+            ;;        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
             ;; Tasks TODO
             (todo "TODO"
                   ((org-agenda-overriding-header "Tasks")
@@ -600,44 +605,28 @@ Right now there's only one capture template, /i/, which adds the idea to the inb
     (org-download-screenshot-method "screencapture -i %s"))
 #+END_SRC
 
-=org-brain= dropped in favour of =org-roam=
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package org-brain
-    :init
-    (setq org-brain-path (concat tk/org-directory "brain/"))
-    :config
-    (setq org-id-track-globally t)
-    (setq org-id-locations-file (concat user-emacs-directory ".org-id-locations"))
-    (push '("b" "Brain" plain (function org-brain-goto-end)
-            "* %i%?" :empty-lines 1)
-          org-capture-templates)
-    (setq org-brain-visualize-default-choices 'all)
-    (setq org-brain-title-max-length 12)
-    (setq org-brain-include-file-entries nil
-          org-brain-file-entries-use-title nil))
-#+END_SRC
-
 =org-roam=
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
   (use-package org-roam
         :after org
-        :hook (org-mode . org-roam-mode)
-        :straight (:host github :repo "jethrokuan/org-roam")
-        :custom
-        (org-roam-directory tk/org-directory)
+        :straight (:host github :repo "org-roam/org-roam" :branch "v2")
+        :config
+        (setq org-roam-directory (file-truename tk/org-wiki-directory))
+        (setq org-roam-file-extensions '("org"))
+        (org-roam-setup)
         :bind
-        ("C-c n l" . org-roam)      
-        ("C-c n t" . org-roam-today)
-        ("C-c n f" . org-roam-find-file)
-        ("C-c n i" . org-roam-insert)
-        ("C-c n g" . org-roam-show-graph))
+        ("C-c n /" . org-roam-node-find)      
+        ("C-c n c" . org-roam-capture)
+        ("C-c n i" . org-roam-node-insert)
+        ("C-c n r" . org-roam-buffer-toggle))
 #+END_SRC
 
 ** Habits
 Org has a nice way of tracking em.
 
-#+BEGIN_SRC emacs-lisp :tangle no
-  (add-to-list 'org-modules 'habit)
+#+BEGIN_SRC emacs-lisp
+  (require 'org-install)
+  (add-to-list 'org-modules 'org-habit)
 #+END_SRC
 
 ** Blog
@@ -646,44 +635,34 @@ Org mode can also be used as a blog creation platform. I can write and keep blog
 ** Site Publishing
 Pusblishing my website. Written in org files and published to HTML/Gemini. Will replace Blog.
 
-But first we'll have to quickly pull in an org-mode gemini exporter. I was writing my own, but Justin Abrahms version is pretty good.
-
 #+BEGIN_SRC emacs-lisp
-  (load "~/.emacs.d/lisp/ox-gemini/ox-gemini.el")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
+  (setq org-html-postamble nil)
+  ;;(setq tk/site-publish-dir "/ssh:comf.moe:/usr/local/www/comf.moe/")
+  (setq tk/site-publish-dir "/ssh:beagle:/var/www/comf.moe/")
   (setq org-publish-project-alist
-        '(("site-root"
+        `(("site-root"
            :base-directory "~/doc/site/"
            :base-extension "org"
            :section-numbers nil
            :table-of-contents nil
            :publishing-function org-html-publish-to-html
-           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/")
-
+           :publishing-directory ,tk/site-publish-dir)
+  
           ("site-static"
            :base-directory "~/doc/site/"
            :base-extension "css\\|html\\|js\\|jpg\\|png\\|gif"
            :recursive t
            :publishing-function org-publish-attachment
-           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/")
-
+           :publishing-directory ,tk/site-publish-dir)
+  
           ("site-blog"
            :base-directory "~/doc/blog/"
            :base-extension "org"
            :auto-sitemap t
            :auto-sitemap "index"
            :publishing-function org-html-publish-to-html
-           :publishing-directory "/ssh:comf.moe:/usr/local/www/comf.moe/blog/")
-
-          ;;("site-gemini"
-          ;; :base-directory "~/doc/site/"
-          ;; :publishing-function org-gemini-publish-to-gemini
-          ;; :publishing-directory "/ssh:comf.moe:/usr/local/gemini/")
-
-          ;; TODO ox-gemini publishing
-
+           :publishing-directory ,(concat tk/site-publish-dir "blog/"))
+  
           ("site" :components ("site-root" "site-static" "site-blog"))))
 #+END_SRC
 
@@ -794,42 +773,4 @@ I guess I write academic stuff. As such we need the ultimate academic tool.
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'academic-phrases)
-#+END_SRC
-
-** Unused
-*** Matlab
-Urgh, matlab. At least its not too bad to use from within Emacs. We've gotta tell matlab-mode where the matlab binary is, and then we get to use the shell and eval like features in Emacs.
-
-#+BEGIN_SRC emacs-lisp :tanlge no
-(straight-use-package 'matlab-mode)
-(setq matlab-shell-command "/Applications/MATLAB_R2019a.app/bin/matlab")
-(setq matlab-shell-command-switches (list "-nodesktop"))
-#+END_SRC
-
-*** C#
-We use csharp-mode for general syntax highlighting, and omnisharp for more advanced tooling.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (straight-use-package 'csharp-mode)
-  (straight-use-package 'omnisharp)
-
-  (add-hook 'csharp-mode-hook #'omnisharp-mode)
-  ;(omnisharp-install-server)  ;Will do nothing if server already installed
-
-  (eval-after-load
-   'company
-   '(add-to-list 'company-backends 'company-omnisharp))
-
-  (add-hook 'csharp-mode-hook #'company-mode)
-#+END_SRC
-
-*** Swift/Xcode
-Currently non working, not tangled
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package lsp-sourcekit
-    :after lsp-mode
-    :config
-    (setenv "SOURCEKIT_TOOLCHAIN_PATH" "/Library/Developer/Toolchains/")
-    (setq lsp-sourcekit-executable (expand-file-name "/L")))
 #+END_SRC

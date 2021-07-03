@@ -1,3 +1,6 @@
 [submodule "lisp/ox-gemini"]
 	path = lisp/ox-gemini
 	url = https://git.sr.ht/~abrahms/ox-gemini
+[submodule "lisp/richii"]
+	path = lisp/richii
+	url = git@github.com:tokamach/richii.el.git
