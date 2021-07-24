@@ -433,7 +433,9 @@ Org agenda would annoyingly mess up your windows and then not put them back. Be 
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-fragtog
-    :config (setq org-latex-create-formula-image-program 'dvisvgm) ;; For HD latex
+    :config
+    (setq org-preview-latex-default-process 'dvisvgm) ;; For HD latex
+    (setq org-format-latex-options '(:scale 0.8))
     :hook (org-mode-hook . org-fragtog-mode))
 #+END_SRC 
 
