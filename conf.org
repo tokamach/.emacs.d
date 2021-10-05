@@ -8,6 +8,13 @@ This is my emacs init written in org mode. In order to avoid a ton of problems, 
 * Work or Home Mode
 Since I use emacs at both work and home I'd rather be able to share a single config but configure slightly differently depending on where I am. I set =tk/environment= to allow the config to adapt as needed.
 
+Values:
++ =home=
++ =work=
++ =server=
+
+  TODO: guess this value
+
 #+BEGIN_SRC emacs-lisp
   (setq tk/env 'home)
 #+END_SRC
@@ -53,47 +60,9 @@ First we'll install the theme packages. I'm a fan of light themes for several re
 But being human I'm not one to blindly (lol) make decisions based on purely logical reasoning, so the the second motive is a more illogical, human one. I find that using a light theme puts my mind in a different state to a dark one, treating my editor and its text as a purer interface, a kind of smart[ish] paper or perhaps an Alto or LMI Lambda, something to be cared for, rather than the spammy, beeping, ugly font VGA terminals that a white on black theme reminds me of.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package tao-theme)     ;; for tao-yang
-  (use-package gruvbox-theme) ;; for gruvbox-light-soft
-  (use-package parchment-theme
-    :init (load-theme 'parchment))
-#+END_SRC
-
-**** Obsolete Theme picker
-Theme picker. I can add themes I like the the list =tk/themes= and choose from them when I want. I realised I changed themes quite a lot, not least in the morning and evening I switch between a light and dark theme.
-    
-#+BEGIN_SRC emacs-lisp :tangle no
-  (defvar tk/themes '(
-			    ;; Dark Themes
-			    base16-atlas
-			    purple-haze
-			    soothe
-
-			    ;; Light Themes
-			    base16-atelier-estuary-light
-			    parchment
-			    plan9
-			    anti-zenburn))
-
-  (require 'fringe)
-  
-  (defun tk/pick-theme ()
-    "Present a list of themes for user to pick"
-    (interactive)
-    (ivy-read
-     "Pick theme:"
-     tk/themes 
-     :require-match t
-     ;; :initial-input (car custom-enabled-themes)
-     :action (lambda (theme)
-	       (progn
-		 (mapc #'disable-theme custom-enabled-themes)
-		 (load-theme (intern theme) t)
-		 (fringe-mode 'minimal)))
-     :update-fn (lambda ()
-		  (progn (mapc #'disable-theme custom-enabled-themes)
-			 (load-theme (nth ivy--index tk/themes) t)
-			 (fringe-mode 0)))))
+  (use-package tao-theme
+    :init (load-theme 'tao-yang)
+    :config (setq tao-theme-use-sepia t))
 #+END_SRC
 
 *** Font
@@ -121,9 +90,6 @@ This sections a doozy. Welcome to emacs in the 21st century. Basically we just h
 
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . light))
-
-  ;; better modeline
-  (use-package feebleline)
 #+END_SRC
 
 *** Dashboard
@@ -171,11 +137,15 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
     (straight-use-package 'smooth-scrolling)
     (require 'smooth-scrolling)
     (smooth-scrolling-mode 1)
+#+END_SRC
 
-    ;; stop backups
-    (setq backup-inhibited t
-          make-backup-files nil
-          auto-save-default nil)
+*** Disable Backups
+
+#+BEGIN_SRC emacs-lisp
+  ;; stop backups
+  (setq backup-inhibited t
+        make-backup-files nil
+        auto-save-default nil)
 #+END_SRC
 
 *** Undo Tree
@@ -198,31 +168,6 @@ Opening emacs only to be greeted by a blank =*scratch*= isn't fun. How about a c
       (use-package tramp
         :defer 5
         :config)
-#+END_SRC
-
-This lets us connect to locally running docker containers. See [[https://willschenk.com/articles/2020/tramp_tricks/][here]].
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  ;; Open files in Docker containers like so: /docker:drunk_bardeen:/etc/passwd
-(add-to-list 'tramp-methods
-   (cons
-    "docker"
-    '((tramp-login-program "docker")
-      (tramp-login-args (("exec" "-it") ("%h") ("/bin/bash")))
-      (tramp-remote-shell "/bin/sh")
-      (tramp-remote-shell-args ("-i") ("-c")))))
-
-  (defadvice tramp-completion-handle-file-name-all-completions
-    (around dotemacs-completion-docker activate)
-    "(tramp-completion-handle-file-name-all-completions \"\" \"/docker:\" returns
-      a list of active Docker container names, followed by colons."
-    (if (equal (ad-get-arg 1) "/docker:")
-        (let* ((dockernames-raw (shell-command-to-string "docker ps | awk '$NF != \"NAMES\" { print $NF \":\" }'"))
-               (dockernames (cl-remove-if-not
-                             #'(lambda (dockerline) (string-match ":$" dockerline))
-                             (split-string dockernames-raw "\n"))))
-          (setq ad-return-value dockernames))
-      ad-do-it))
 #+END_SRC
 
 *** Editor key bindings
@@ -385,12 +330,6 @@ Better pdf viewing
         rcirc-default-nick "sasha"
         rcirc-default-full-name "just another soul floating through digital space"
         rcirc-buffer-maximum-lines 1000)
-#+END_SRC
-
-*** matrix-chat
-#+BEGIN_SRC emacs-lisp
-(use-package matrix-client
-  :straight (:host github :repo "alphapapa/matrix-client.el"))
 #+END_SRC
 
 * Org
@@ -639,8 +578,8 @@ Pusblishing my website. Written in org files and published to HTML/Gemini. Will 
 
 #+BEGIN_SRC emacs-lisp
   (setq org-html-postamble nil)
-  ;;(setq tk/site-publish-dir "/ssh:comf.moe:/usr/local/www/comf.moe/")
-  (setq tk/site-publish-dir "/ssh:beagle:/var/www/comf.moe/")
+  (setq tk/site-publish-dir "/ssh:comf.moe:/usr/local/www/comf.moe/")
+  ;;(setq tk/site-publish-dir "/ssh:beagle:/var/www/comf.moe/")
   (setq org-publish-project-alist
         `(("site-root"
            :base-directory "~/doc/site/"
@@ -709,14 +648,6 @@ The mode hook is to set up eglot, but since that's proved very difficult in OS d
   ;(add-hook 'c-mode-hook 'tk/c-c++-hook)
 #+END_SRC
 
-*** Work C++
-For work I have to write a different style.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq c-default-style "whitesmith"
-	    c-basic-offset 8)
-#+END_SRC
-
 *** LSP
 I use LSP in non-work codebases sometimes.
 
@@ -733,7 +664,7 @@ The language of the gods finally gets its turn. Do I want intelligent context de
   (straight-use-package 'lispy)
   (straight-use-package 'rainbow-delimiters)
   (straight-use-package 'el-fly-indent-mode)
-
+  
   ;; TODO split this into hook declaration then multiple use-package declarations adding to hook
   (defun tk/lisp-hook ()
     "Personal Lisp hook."
@@ -743,19 +674,16 @@ The language of the gods finally gets its turn. Do I want intelligent context de
     (show-paren-mode)
     (company-mode)
     (el-fly-indent-mode))
-
+  
   (add-hook 'emacs-lisp-mode-hook  #'tk/lisp-hook)
   (add-hook 'common-lisp-mode-hook #'tk/lisp-hook)
   (add-hook 'scheme-mode-hook      #'tk/lisp-hook)
   (add-hook 'lisp-mode-hook        #'tk/lisp-hook)
-
+  
   ;; Common Lisp
   (use-package sly)
-
-  ;; (straight-use-package 'slime-company)
-  ;; (require 'slime)
+  
   ;; (setq inferior-lisp-program "/opt/local/bin/sbcl")
-  ;; (slime-setup '(slime-fancy slime-company))
 #+END_SRC
 
 ** Latex
