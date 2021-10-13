@@ -212,10 +212,11 @@ Better completion.
 
 #+BEGIN_SRC emacs-lisp
   (use-package orderless
+    :ensure t
     :custom
     (completion-styles '(orderless))
     (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles partial-completion)))))
+    (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
 **** Marginalia
