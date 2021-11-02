@@ -13,7 +13,6 @@ abbrev_defs
 .cache
 
 *.elc
-conf.el
 #*#
 
 straight
