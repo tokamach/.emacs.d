@@ -22,6 +22,9 @@ bookmarks
 transient
 var
 semanticdb
+projects
+org-roam.db
+thumbs
 
 xkcd
 image-dired
