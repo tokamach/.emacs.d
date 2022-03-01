@@ -171,6 +171,16 @@
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'super)
 
+;;** Backups
+(setq
+   backup-by-copying t ;; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.emacs.d/backups/")) ;; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t) ;; use versioned backups
+
 ;;* Tools
 ;; Non-editing emacs tools
 (use-package magit)
@@ -179,6 +189,8 @@
   :init
   (pdf-loader-install)
   (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1))))
+
+(use-package vterm)
 
 ;;* Org
 (setq org-log-into-drawer "LOGBOOK"
@@ -203,15 +215,27 @@
 ;;** Notes
 (setq tk/org-directory "~/doc/org/"
       tk/org-wiki-directory "~/doc/org/wiki/"
+      tk/org-blog-directory "~/doc/blog/"
       tk/org-file-list `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))
 
-(setq org-todo-keywords '((sequence "TODO" "WAIT" "|" "DONE" ))
+(setq org-todo-keywords '((sequence "TODO" "WAIT" "DOING" "|" "DONE" ))
       org-default-notes-file (concat tk/org-directory "inbox.org")
       org-refile-targets (mapcar (lambda (e) `(,e . (:maxlevel . 2)))
 				 tk/org-file-list)
       org-refile-use-outline-path 'file)
 
 (use-package org-pomodoro)
+(use-package org-roam
+      :after org
+      :straight (:host github :repo "org-roam/org-roam")
+      :config
+      (setq org-roam-directory (file-truename tk/org-wiki-directory))
+      (setq org-roam-file-extensions '("org"))
+      (org-roam-setup)
+      :bind
+      ("C-c n /" . org-roam-node-find)      
+      ("C-c n c" . org-roam-capture)
+      ("C-c n i" . org-roam-node-insert))
 
 ;;** Agenda
 (setq org-agenda-block-separator ?-
@@ -219,11 +243,6 @@
       org-agenda-files tk/org-file-list
       org-agenda-custom-commands
       `(("a" "Agenda"
-	 ;; Today
-	 (;; (agenda ""
-	  ;;         ((org-agenda-span 'day)
-	  ;;          (org-agenda-overriding-header "Today")
-	  ;;          (org-deadline-warning-days 365)))
 	  ;; The Week
 	  (agenda ""
 		  ((org-agenda-span 'week)
@@ -233,55 +252,80 @@
 	  (todo "TODO"
 		((org-agenda-overriding-header "Inbox")
 		 (org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
-	  ;; Waiting on
-	  ;; (todo "WAIT"
-	  ;;       ((org-agenda-overriding-header "Waiting On")
-	  ;;        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
-	  ;; Tasks TODO
+	  ;; Doing
+	  (todo "DOING"
+	        ((org-agenda-overriding-header "In Progress")
+	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
+	  ;; Tasks to do
 	  (todo "TODO"
 		((org-agenda-overriding-header "Tasks")
 		 (org-agenda-files `(,(concat tk/org-directory "todo.org")))
 		 (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+	  ;; Waiting
+	  (todo "WAIT"
+	        ((org-agenda-overriding-header "Waiting On")
+	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
 	  nil)))
       
       org-clock-idle-timer 15
 
       org-capture-templates
       `(("i" "inbox" entry (file ,(concat tk/org-directory "inbox.org")) "* TODO %?")
-	("n" "next" entry (file ,(concat tk/org-directory "next.org"))   "* TODO %?")))
+	("t" "todo"  entry (file ,(concat tk/org-directory "todo.org"))  "* TODO %?")
+	("b" "blog"  entry (file ,(concat tk/org-blog-directory
+					  (format-time-string "%y-%m-%d.org"))) "* %?" )))
 
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 
 ;;** Publishing
   (setq org-html-postamble nil)
-  (setq tk/site-publish-dir "/ssh:comf.moe:/usr/local/www/comf.moe/")
-  ;;(setq tk/site-publish-dir "/ssh:beagle:/var/www/comf.moe/")
+  (setq tk/site-publish-base-dir "/ssh:comftail:/usr/local/www/")
   (setq org-publish-project-alist
-        `(("site-root"
-           :base-directory "~/doc/site/"
+        `(("comf.moe-root"
+           :base-directory "~/doc/sites/comf.moe/"
            :base-extension "org"
            :section-numbers nil
            :table-of-contents nil
            :publishing-function org-html-publish-to-html
-           :publishing-directory ,tk/site-publish-dir)
+           :publishing-directory ,(concat tk/site-publish-base-dir "comf.moe"))
   
-          ("site-static"
-           :base-directory "~/doc/site/"
+          ("comf.moe-static"
+           :base-directory "~/doc/sites/comf.moe"
+           :base-extension "css\\|html\\|js\\|jpg\\|png\\|gif"
+	   :exclude "images" ;; We manually move using rsync
+           :recursive t
+           :publishing-function org-publish-attachment
+           :publishing-directory ,(concat tk/site-publish-base-dir "comf.moe"))
+  
+          ("comf.moe-blog"
+           :base-directory "~/doc/blog/"
+           :base-extension "org"
+	   :recursive t
+           :auto-index t
+           :auto-index "index"
+	   :sitemap-sort-files anti-chronologically
+	   :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/modern.css\" />"
+           :publishing-function org-html-publish-to-html
+           :publishing-directory ,(concat tk/site-publish-base-dir "comf.moe/" "blog/"))
+  
+          ("comf.moe" :components ("comf.moe-root" "comf.moe-static" "comf.moe-blog"))
+
+	  ("tokama.ch-root"
+	   :base-directory "~/doc/sites/tokama.ch/"
+           :base-extension "org"
+           :section-numbers nil
+           :table-of-contents nil
+           :publishing-function org-html-publish-to-html
+           :publishing-directory ,(concat tk/site-publish-base-dir "tokama.ch"))  
+          ("tokama.ch-static"
+           :base-directory "~/doc/sites/tokama.ch"
            :base-extension "css\\|html\\|js\\|jpg\\|png\\|gif"
            :recursive t
            :publishing-function org-publish-attachment
-           :publishing-directory ,tk/site-publish-dir)
-  
-          ("site-blog"
-           :base-directory "~/doc/blog/"
-           :base-extension "org"
-           :auto-sitemap t
-           :auto-sitemap "index"
-           :publishing-function org-html-publish-to-html
-           :publishing-directory ,(concat tk/site-publish-dir "blog/"))
-  
-          ("site" :components ("site-root" "site-static" "site-blog"))))
+           :publishing-directory ,(concat tk/site-publish-base-dir "tokama.ch"))
+
+	  ("tokama.ch" :components ("tokama.ch-root"))))
 
 ;;* Languages
 (use-package company)
