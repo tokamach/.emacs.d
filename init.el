@@ -258,28 +258,27 @@
       org-agenda-custom-commands
       `(("a" "Agenda"
 	 ;; The Week
-	 (agenda ""
-		 ((org-agenda-span 'week)
-		  (org-agenda-overriding-header "This Week")
-		  (org-deadline-warning-days 5)))
-	 ;; Inbox
-	 (todo "TODO"
-	       ((org-agenda-overriding-header "Inbox")
-		(org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
-	 ;; Doing
-	 (todo "DOING"
-	       ((org-agenda-overriding-header "In Progress")
-	        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
-	 ;; Tasks to do
-	 (todo "TODO"
-	       ((org-agenda-overriding-header "Tasks")
-		(org-agenda-files `(,(concat tk/org-directory "todo.org")))
-		(org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-	 ;; Waiting
-	 (todo "WAIT"
-	       ((org-agenda-overriding-header "Waiting On")
-	        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
-	 nil))
+	 ((agenda ""
+		  ((org-agenda-span 'week)
+		   (org-agenda-overriding-header "This Week")
+		   (org-deadline-warning-days 5)))
+	  ;; Inbox
+	  (todo "TODO"
+		((org-agenda-overriding-header "Inbox")
+		 (org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
+	  ;; Doing
+	  (todo "DOING"
+		((org-agenda-overriding-header "In Progress")
+	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
+	  ;; Tasks to do
+	  (todo "TODO"
+		((org-agenda-overriding-header "Tasks")
+		 (org-agenda-files `(,(concat tk/org-directory "todo.org")))
+		 (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+	  ;; Waiting
+	  (todo "WAIT"
+		((org-agenda-overriding-header "Waiting On")
+	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org")))))))))
       
       org-clock-idle-timer 15
 
@@ -366,7 +365,7 @@
   (company-mode))
 
 (use-package lispy
-  :hook (tk/lisp . lispy-mode))
+  :hook (tk/lisp . lispy-mode))e
 
 (use-package rainbow-delimiters
   :hook (tk/lisp . rainbow-delimiters-mode))
@@ -377,6 +376,7 @@
 (add-hook 'lisp-mode-hook        #'tk/lisp-hook)
 
 (use-package geiser)
+(use-package geiser-guile)
 (use-package sly)
   
 ;;** LaTeX
