@@ -1,7 +1,7 @@
 ;; -*- outline-minor-mode: t -*-
 
 ;;* Config Mode
-;; Switch between home/server/work modes
+;; Switch between home/server/mobile/work modes
 (setq tk/env 'home)
 
 (setq custom-file (concat user-emacs-directory  "custom.el"))
@@ -43,6 +43,7 @@
 (setq ring-bell-function 'ignore)
 (setq initial-scratch-message "")
 (tool-bar-mode 0)
+(menu-bar-mode 0)
 (when (display-graphic-p)
   (scroll-bar-mode 0)
   (fringe-mode '(1 . 1)))
@@ -51,29 +52,28 @@
 ;;*** Dashboard
     (use-package dashboard
       :init
-      (let ((random-choice (lambda (elems)
-                             (let* ((size (length elems))
-                                    (index (random size)))
-                               (nth index elems))))
-	    ;; TODO: if (= tk/env 'home) use some other pics too (~/Pictures/animu maybe?)
-            (imgs (append (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.png"))
-                          (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.jpg"))
-                          (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.svg"))))
-            (quotes `("You're slacking off instead of writing Lisp? Pretty cringe bro."
-                      "What Would McCarthy Do?"
-                      "Have you read your SICP today?"
-                      "Don't think! Feel!"
-                      "THINK!"
-                      ,(if (eq tk/env 'home)
-                           "Do it for her."
-			 "Remember, it's all in your head."))))
-	(setq dashboard-startup-banner (funcall random-choice imgs))
-	(setq dashboard-banner-logo-title (funcall random-choice quotes)))
-      
-      (setq dashboard-image-banner-max-height 400)
-      (setq dashboard-image-banner-max-width 400)
+      (when (display-graphic-p)
+	(let ((random-choice (lambda (elems)
+                               (let* ((size (length elems))
+                                      (index (random size)))
+				 (nth index elems))))
+	      ;; TODO: if (= tk/env 'home) use some other pics too (~/Pictures/animu maybe?)
+              (imgs (append (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.png"))
+                            (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.jpg"))
+                            (file-expand-wildcards (concat user-emacs-directory "dashboard-images/*.svg"))))
+              (quotes `("You're slacking off instead of writing Lisp? Pretty cringe bro."
+			"What Would McCarthy Do?"
+			"Have you read your SICP today?"
+			"Don't think! Feel!"
+			"THINK!"
+			,(if (eq tk/env 'home)
+                             "Do it for her."
+			   "Remember, it's all in your head."))))
+	  (setq dashboard-startup-banner (funcall random-choice imgs))
+	  (setq dashboard-banner-logo-title (funcall random-choice quotes)))
+	(setq dashboard-image-banner-max-height 400)
+	(setq dashboard-image-banner-max-width 400))
       (setq dashboard-center-content t)
-      ;;(setq show-week-agenda-p nil)
       (setq dashboard-items '((recents . 5)
                               (projects . 5)))
       (setq dashboard-set-footer nil)
@@ -97,6 +97,10 @@
 ;; Vertico: vertical completion prompt
 (use-package vertico
   :init (vertico-mode))
+
+(when (display-graphic-p)
+  (use-package vertico-posframe
+    :init (vertico-posframe-mode)))
 
 ;; Orderless: better completion
 (use-package orderless
@@ -185,10 +189,11 @@
 ;; Non-editing emacs tools
 (use-package magit)
 (use-package projectile)
-(use-package pdf-tools
-  :init
-  (pdf-loader-install)
-  (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1))))
+(when (display-graphic-p)
+  (use-package pdf-tools
+    :init
+    (pdf-loader-install)
+    (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))))
 
 (use-package vterm)
 
@@ -198,19 +203,20 @@
       org-hide-emphasis-markers t
       org-startup-indented t)
 
-(use-package org-superstar
-  :config (org-superstar-configure-like-org-bullets)
-  :hook (org-mode . org-superstar-mode))
+(when (display-graphic-p)
+  (use-package org-superstar
+    :config (org-superstar-configure-like-org-bullets)
+    :hook (org-mode . org-superstar-mode))
 
-(use-package org-fragtog
-  :config
+  (use-package org-fragtog
+    :config
     (setq org-preview-latex-default-process 'dvisvgm) ;; For HD latex
     (setq org-format-latex-options '(:scale 0.8))
     :hook (org-mode-hook . org-fragtog-mode))
 
-(use-package org-variable-pitch
-  :config (org-variable-pitch-setup)
-  :hook (org-mode . org-variable-pitch-minor-mode))
+  (use-package org-variable-pitch
+    :config (org-variable-pitch-setup)
+    :hook (org-mode . org-variable-pitch-minor-mode)))
 
 ;;** Notes
 (setq tk/org-directory "~/doc/org/"
@@ -227,7 +233,7 @@
 (use-package org-pomodoro)
 (use-package org-roam
       :after org
-      :straight (:host github :repo "org-roam/org-roam")
+      ;; :straight (:host github :repo "org-roam/org-roam")
       :config
       (setq org-roam-directory (file-truename tk/org-wiki-directory))
       (setq org-roam-file-extensions '("org"))
@@ -237,35 +243,43 @@
       ("C-c n c" . org-roam-capture)
       ("C-c n i" . org-roam-node-insert))
 
+(use-package org-download
+  :after org
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank))))
+
 ;;** Agenda
 (setq org-agenda-block-separator ?-
       org-agenda-restore-windows-after-quit 1
       org-agenda-files tk/org-file-list
+      org-id-extra-files `(,@(file-expand-wildcards (concat tk/org-wiki-directory "*.org")))
       org-agenda-custom-commands
       `(("a" "Agenda"
-	  ;; The Week
-	  (agenda ""
-		  ((org-agenda-span 'week)
-		   (org-agenda-overriding-header "This Week")
-		   (org-deadline-warning-days 5)))
-	  ;; Inbox
-	  (todo "TODO"
-		((org-agenda-overriding-header "Inbox")
-		 (org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
-	  ;; Doing
-	  (todo "DOING"
-	        ((org-agenda-overriding-header "In Progress")
-	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
-	  ;; Tasks to do
-	  (todo "TODO"
-		((org-agenda-overriding-header "Tasks")
-		 (org-agenda-files `(,(concat tk/org-directory "todo.org")))
-		 (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-	  ;; Waiting
-	  (todo "WAIT"
-	        ((org-agenda-overriding-header "Waiting On")
-	         (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
-	  nil)))
+	 ;; The Week
+	 (agenda ""
+		 ((org-agenda-span 'week)
+		  (org-agenda-overriding-header "This Week")
+		  (org-deadline-warning-days 5)))
+	 ;; Inbox
+	 (todo "TODO"
+	       ((org-agenda-overriding-header "Inbox")
+		(org-agenda-files `(,(concat tk/org-directory "inbox.org")))))
+	 ;; Doing
+	 (todo "DOING"
+	       ((org-agenda-overriding-header "In Progress")
+	        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
+	 ;; Tasks to do
+	 (todo "TODO"
+	       ((org-agenda-overriding-header "Tasks")
+		(org-agenda-files `(,(concat tk/org-directory "todo.org")))
+		(org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+	 ;; Waiting
+	 (todo "WAIT"
+	       ((org-agenda-overriding-header "Waiting On")
+	        (org-agenda-files `(,@(file-expand-wildcards (concat tk/org-directory "*.org"))))))
+	 nil))
       
       org-clock-idle-timer 15
 
@@ -279,6 +293,7 @@
 (global-set-key (kbd "C-c c") #'org-capture)
 
 ;;** Publishing
+(when (eq tk/env 'home)
   (setq org-html-postamble nil)
   (setq tk/site-publish-base-dir "/ssh:comftail:/usr/local/www/")
   (setq org-publish-project-alist
@@ -308,6 +323,17 @@
 	   :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/modern.css\" />"
            :publishing-function org-html-publish-to-html
            :publishing-directory ,(concat tk/site-publish-base-dir "comf.moe/" "blog/"))
+	  
+	  ("comf.moe-wiki"
+	   :base-directory "~/doc/org/wiki/"
+	   :base-extension "org"
+	   :auto-sitemap t
+	   :sitemap-filename "index"
+	   :sitemap-title "Index"
+	   :sitemap-sort-files anti-chronologically
+	   :html-head "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/modern.css\" />"
+	   :publishing-function org-html-publish-to-html
+	   :publishing-directory ,(concat tk/site-publish-base-dir "comf.moe/wiki/"))
   
           ("comf.moe" :components ("comf.moe-root" "comf.moe-static" "comf.moe-blog"))
 
@@ -325,7 +351,7 @@
            :publishing-function org-publish-attachment
            :publishing-directory ,(concat tk/site-publish-base-dir "tokama.ch"))
 
-	  ("tokama.ch" :components ("tokama.ch-root"))))
+	  ("tokama.ch" :components ("tokama.ch-root")))))
 
 ;;* Languages
 (use-package company)
@@ -356,8 +382,9 @@
 ;;** LaTeX
 ;;(use-package auctex)
 ;;(use-package latex-pretty-symbols)
-;;(use-package exec-path-from-shell)
-;;
-;;(exec-path-from-shell-initialize)
+
+(use-package exec-path-from-shell)
+(exec-path-from-shell-initialize)
+
 ;;(setq TeX-parse-self t) ; Enable parse on load.
 ;;(setq TeX-auto-save t) ; Enable parse on save.
